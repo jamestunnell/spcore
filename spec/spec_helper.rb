@@ -1,4 +1,4 @@
 require 'rspec'
-require 'sigproc/version'
+require 'sigproc'
 
 include Sigproc
