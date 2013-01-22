@@ -1,0 +1,27 @@
+= sigproc
+
+* {Homepage}[https://rubygems.org/gems/sigproc]
+* {Documentation}[http://rubydoc.info/gems/sigproc/frames]
+* {Email}[mailto:jamestunnell at lavabit.com]
+
+== Description
+
+TODO: Description
+
+== Features
+
+== Examples
+
+  require 'sigproc'
+
+== Requirements
+
+== Install
+
+  $ gem install sigproc
+
+== Copyright
+
+Copyright (c) 2013 James Tunnell
+
+See LICENSE.txt for details.
