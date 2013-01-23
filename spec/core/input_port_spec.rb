@@ -1,6 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SigProc::InputPort do
+  describe '.new' do
+    it 'should have an empty queue' do
+      port = SigProc::InputPort.new(:name => 'xyz', :continuous => true)
+      port.queue.should be_empty
+    end
+  end
+
   describe 'enqueue_values' do
     it 'should add values to queue' do
       port = SigProc::InputPort.new(:name => 'xyz', :continuous => true)
