@@ -5,6 +5,7 @@ describe SigProc::InputPort do
     it 'should add values to queue' do
       port = SigProc::InputPort.new(:name => 'xyz', :continuous => true)
       values = [2.4, 2.6, 4.9, 5.1]
+      
       port.enqueue_values(values.clone)
       values.should eq(port.queue)
     end
@@ -18,4 +19,16 @@ describe SigProc::InputPort do
       end
     end
   end
+
+  describe 'dequeue_values' do
+    it 'should remove all values from queue' do
+      port = SigProc::InputPort.new(:name => 'xyz', :continuous => true)
+      values = [2.4, 2.6, 4.9, 5.1]
+      port.enqueue_values(values.clone)
+      values2 = port.dequeue_values
+      port.queue.should be_empty
+      values2.should eq(values)
+    end
+  end
+
 end
