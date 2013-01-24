@@ -4,7 +4,7 @@ module SigProc
 class OutputPort
   include HashMake
   
-  attr_accessor :name, :continuous, :links
+  attr_reader :name, :continuous, :links
   
   HASHED_ARGS = [
     HashedArg.new(:reqd => true, :key => :name, :type => String),

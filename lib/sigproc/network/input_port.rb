@@ -2,7 +2,7 @@ module SigProc
 class InputPort
   include HashMake
   
-  attr_accessor :name, :continuous, :limit, :queue
+  attr_reader :name, :continuous, :limit, :queue
   
   HASHED_ARGS = [
     HashedArg.new(:reqd => true, :key => :name, :type => String),

@@ -67,10 +67,7 @@ module HashMake
       end
       
       raise ArgumentError, "value #{val} is not valid" unless arg.validator.call(val)
-      
-      assigner_sym = "#{key.to_s}=".to_sym
-      raise "current object #{self} does not include method #{assigner_sym.inspect}" unless self.methods.include?(assigner_sym)
-      self.send(assigner_sym, val)
+      self.instance_variable_set("@#{key.to_s}".to_sym, val)
     end
   end
 

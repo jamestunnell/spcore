@@ -2,7 +2,7 @@ module SigProc
 class Processor
   include HashMake
   
-  attr_accessor :name, :input_ports, :output_ports
+  attr_reader :name, :input_ports, :output_ports
   
   HASHED_ARGS = [
     HashedArg.new(:reqd => false, :key => :name, :type => String, :default => "UNNAMED"),
