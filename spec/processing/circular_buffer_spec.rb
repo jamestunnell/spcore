@@ -24,6 +24,15 @@ describe SigProc::CircularBuffer do
       end
     end
   end
+
+  describe '#push_ary' do
+    it 'should add the given array' do
+      elements = [1,2,3,4,5,6]
+      buffer = SigProc::CircularBuffer.new elements.count
+      buffer.push_ary elements
+      buffer.to_ary.should eq(elements)
+    end
+  end
   
   describe '#pop' do
     it 'should, with fifo set to true, after a series of pushes, report the first element pushed' do
@@ -74,6 +83,18 @@ describe SigProc::CircularBuffer do
       buffer.pop
       buffer.newest.should eq(elements[-2])
     end
+    
+    it 'should, when given a relative index, report the element reverse-indexed from the newest' do
+      elements = [1,2,3,4,5]
+      buffer = SigProc::CircularBuffer.new elements.count, :fifo => false
+      elements.each do |element|
+        buffer.push element
+      end
+      
+      for i in 0...elements.count do
+        buffer.newest(i).should eq(elements[elements.count - 1 - i])
+      end
+    end
   end
   
   describe '#oldest' do
@@ -104,6 +125,53 @@ describe SigProc::CircularBuffer do
       end
       buffer.pop
       buffer.oldest.should eq(elements.first)
+    end
+    
+    it 'should, when given a relative index, report the element reverse-indexed from the newest' do
+      elements = [1,2,3,4,5]
+      buffer = SigProc::CircularBuffer.new elements.count, :fifo => false
+      elements.each do |element|
+        buffer.push element
+      end
+      
+      for i in 0...elements.count do
+        buffer.oldest(i).should eq(elements[i])
+      end
+    end
+  end
+  
+  describe '#to_ary' do
+    it 'should produce an empty array for an empty buffer' do
+      buffer = SigProc::CircularBuffer.new 10
+      buffer.to_ary.should be_empty
+    end
+    
+    it 'should, after pushing an array of elements, produce an array of the same elements' do
+      elements = [1,2,3,4,5]
+      buffer = SigProc::CircularBuffer.new elements.count, :fifo => true
+      elements.each do |element|
+        buffer.push element
+      end
+      buffer.to_ary.should eq(elements)
+    end
+
+    it 'should, after pushing and popping an array of elements several times and then pushing the array one last time, produce an array of the same elements' do
+      elements = [1,2,3,4,5]
+      buffer = SigProc::CircularBuffer.new(3 * elements.count, :fifo => true)
+      
+      5.times do
+        elements.each do |element|
+          buffer.push element
+        end
+        elements.count.times do
+          buffer.pop
+        end
+      end
+
+      elements.each do |element|
+        buffer.push element
+      end
+      buffer.to_ary.should eq(elements)
     end
   end
 end

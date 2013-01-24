@@ -42,39 +42,53 @@ class CircularBuffer
   end
   
   def to_ary
-    raise NotImplementedError
-    # TODO
+    if empty?
+      return []
+    end
+
+    # newest index is actually @newest - 1
+    newest_idx = @newest - 1;
+    if(newest_idx < 0)
+      newest_idx += @buffer.count;
+    end
+
+    if newest_idx >= @oldest
+      return @buffer[@oldest..newest_idx]
+    else
+      return @buffer[@oldest...@buffer.count] + @buffer[0..newest_idx]
+    end
   end
   
   def push element
-    rv = false
-    
-    if !full?
-      rv = true
-      @buffer[@newest] = element;
-      @newest += 1
-      @fill_count += 1
-    elsif @override_when_full
-      rv = true
+    if full?
+      raise ArgumentError, "buffer is full, and override_when_full is false" unless @override_when_full
+      
       @buffer[@newest] = element;
       @newest += 1
       @oldest += 1
+    else
+      @buffer[@newest] = element;
+      @newest += 1
+      @fill_count += 1      
     end
 
-    if rv
-      if @oldest >= @buffer.count
-        @oldest = 0
-      end
-
-      if @newest >= @buffer.count
-        @newest = 0
-      end
+    if @oldest >= @buffer.count
+      @oldest = 0
     end
-    return rv;
 
+    if @newest >= @buffer.count
+      @newest = 0
+    end
+  end
+
+  def push_ary ary
+    ary.each do |element|
+      push element
+    end
   end
 
   def newest relative_index = 0
+    raise ArgumentError, "buffer is empty" if empty?
     raise ArgumentError, "relative_index is greater or equal to @fill_count" if relative_index >= @fill_count
 
     # newestIdx is actually @newest - 1
@@ -92,6 +106,7 @@ class CircularBuffer
   end
   
   def oldest relative_index = 0
+    raise ArgumentError, "buffer is empty" if empty?
     raise ArgumentError, "relative_index is greater or equal to @fill_count" if relative_index >= @fill_count
     
     absIdx = @oldest + relative_index;
@@ -106,6 +121,8 @@ class CircularBuffer
   # otherwise pop the newest. Set to true by default, can override during initialize or
   # later using fifo=.
   def pop
+    raise ArgumentError, "buffer is empty" if empty?
+    
     if @fifo
       # FIFO - pop the oldest element
       element = oldest
