@@ -5,8 +5,11 @@ require File.expand_path('../lib/sigproc/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.name          = "sigproc"
   gem.version       = Sigproc::VERSION
-  gem.summary       = %q{TODO: Summary}
-  gem.description   = %q{TODO: Description}
+  gem.summary       = %q{Perform primary signal processing functions and provide infrastructure for forming processing networks.}
+  gem.description   = <<DESCRIPTION
+Perform primary signal processing functions and provide infrastructure
+for forming processing networks.
+DESCRIPTION
   gem.license       = "MIT"
   gem.authors       = ["James Tunnell"]
   gem.email         = "jamestunnell@lavabit.com"
@@ -22,4 +25,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec', '~> 2.4'
   gem.add_development_dependency 'yard', '~> 0.8'
   gem.add_development_dependency 'pry'
+  gem.add_development_dependency 'gnuplot'
 end
