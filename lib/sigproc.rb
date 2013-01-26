@@ -16,6 +16,7 @@ require 'sigproc/processing/cookbook_highpass_filter'
 require 'sigproc/processing/cookbook_lowpass_filter'
 require 'sigproc/processing/cookbook_notch_filter'
 require 'sigproc/processing/envelope_detector'
+require 'sigproc/processing/saturation'
 
 require 'sigproc/network/input_port'
 require 'sigproc/network/output_port'
