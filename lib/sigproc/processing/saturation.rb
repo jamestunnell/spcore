@@ -18,6 +18,20 @@ class Saturation
     end
   end
   
+  def self.gompertz input, threshold
+    a = threshold
+    b = -4
+    c = -2
+    x = input.abs
+    y = 2 * a * Math::exp(b * Math::exp(c * x))
+    
+    if input > 0.0
+      return y
+    else
+      return -y
+    end
+  end
+  
   private
   
   #def self.mock_sigmoid x
