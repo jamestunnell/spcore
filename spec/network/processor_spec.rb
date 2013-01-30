@@ -8,11 +8,11 @@ describe SigProc::Processor do
       end
       
       it 'should have no input ports' do
-        @processor.input_ports.should be_empty
+        @processor.signal_in_ports.should be_empty
       end
 
       it 'should have no output ports' do
-        @processor.output_ports.should be_empty
+        @processor.signal_out_ports.should be_empty
       end
     end
   end

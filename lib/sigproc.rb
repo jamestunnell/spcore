@@ -1,7 +1,7 @@
 require 'sigproc/version'
 
 require 'sigproc/core/hash_make'
-require 'sigproc/core/limit'
+require 'sigproc/core/limiters'
 require 'sigproc/core/constants'
 
 require 'sigproc/processing/interpolation'
@@ -18,6 +18,6 @@ require 'sigproc/processing/cookbook_notch_filter'
 require 'sigproc/processing/envelope_detector'
 require 'sigproc/processing/saturation'
 
-require 'sigproc/network/input_port'
-require 'sigproc/network/output_port'
+require 'sigproc/network/signal_in_port'
+require 'sigproc/network/signal_out_port'
 require 'sigproc/network/processor'

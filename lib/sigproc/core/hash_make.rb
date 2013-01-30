@@ -37,7 +37,7 @@ module HashMake
     base.extend(ClassMethods)
   end
 
-  def hash_make args
+  def hash_make args, assign_args = true
     raise ArgumentError, "args is not a Hash" if !args.is_a?(Hash)
 
     self.class::HASHED_ARGS.each do |arg|
@@ -49,7 +49,7 @@ module HashMake
         if arg.reqd
           raise ArgumentError, "args does not have required key #{key}"
         else
-          if arg.default.is_a?(Proc)
+          if arg.default.is_a?(Proc) && arg.type != Proc
             val = arg.default.call
           else
             val = arg.default
@@ -66,8 +66,10 @@ module HashMake
         raise "val #{val} is not a #{arg.type}" unless val.is_a?(arg.type)
       end
       
-      raise ArgumentError, "value #{val} is not valid" unless arg.validator.call(val)
-      self.instance_variable_set("@#{key.to_s}".to_sym, val)
+      if assign_args
+        raise ArgumentError, "value #{val} is not valid" unless arg.validator.call(val)
+        self.instance_variable_set("@#{key.to_s}".to_sym, val)
+      end
     end
   end
 
