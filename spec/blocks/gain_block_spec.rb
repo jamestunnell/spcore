@@ -19,4 +19,26 @@ describe SigProc::GainBlock do
       reciever.queue.should eq(values)
     end
   end
+  
+  describe "GAIN_DB port" do
+    before :each do
+      @block = SigProc::GainBlock.new
+      @reciever = SigProc::SignalInPort.new
+      @block.signal_out_ports.first.add_link @reciever
+      @values = [ 1.0, 2.0, -1.0 ]
+      @block.signal_in_ports.first.enqueue_values @values
+    end
+
+    it 'should set gain to -20.0' do
+      @block.find_first_port("GAIN_DB").recv_message(-20.0)
+      @block.step
+      @reciever.queue.first.should eq(SigProc::Gain.db_to_linear(-20.0) * @values.first)
+    end
+    
+    it 'should set gain to +20.0' do
+      @block.find_first_port("GAIN_DB").recv_message(20.0)
+      @block.step
+      @reciever.queue.first.should eq(SigProc::Gain.db_to_linear(20.0) * @values.first)
+    end
+  end
 end

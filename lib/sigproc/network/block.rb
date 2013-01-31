@@ -20,6 +20,21 @@ class Block
     hash_make Block::HASHED_ARG_SPECS, args
   end
   
+  def find_ports name, ignore_case = true
+    matches = (@signal_in_ports + @signal_out_ports + @message_in_ports + @message_out_ports).select do |port|
+      if ignore_case
+        port.name.casecmp(name) == 0
+      else
+        port.name == name
+      end
+    end
+    return matches
+  end
+  
+  def find_first_port name, ignore_case = true
+    return find_ports(name, ignore_case).first
+  end
+  
   def step
     @algorithm.call
   end
