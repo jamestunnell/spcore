@@ -25,3 +25,4 @@ require 'sigproc/network/message_out_port'
 require 'sigproc/network/block'
 
 require 'sigproc/blocks/gain_block'
+require 'sigproc/blocks/delay_block'
