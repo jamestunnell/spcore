@@ -4,7 +4,7 @@ class SignalInPort
   
   DEFAULT_LIMITS = (-Float::MAX..Float::MAX)
   
-  HASHED_ARGS = [
+  ARG_SPECS = [
     HashedArg.new(:reqd => false, :key => :name, :type => String, :default => "UNNAMED"),
     HashedArg.new(:reqd => false, :key => :limits, :type => Range, :default => DEFAULT_LIMITS)
   ]
@@ -12,7 +12,7 @@ class SignalInPort
   attr_reader :name, :limits, :link, :queue
   
   def initialize args = {}
-    hash_make args
+    hash_make SignalInPort::ARG_SPECS, args
     @queue = []
     @skip_limiting = (@limits == DEFAULT_LIMITS)
     @limiter = Limiters.make_range_limiter @limits

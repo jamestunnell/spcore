@@ -4,14 +4,14 @@ module SigProc
 class SignalOutPort
   include HashMake
   
-  HASHED_ARGS = [
+  ARG_SPECS = [
     HashedArg.new(:reqd => false, :key => :name, :type => String, :default => "UNNAMED"),
   ]
   
   attr_reader :name, :links
   
   def initialize args = {}
-    hash_make args
+    hash_make SignalOutPort::ARG_SPECS, args
     @links = Set.new
   end
   

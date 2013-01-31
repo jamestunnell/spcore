@@ -4,7 +4,7 @@ class MessageInPort
   
   DEFAULT_VALIDATOR = ->(a){ true }
   
-  HASHED_ARGS = [
+  ARG_SPECS = [
     HashedArg.new(:reqd => false, :key => :name, :type => String, :default => "UNNAMED"),
     HashedArg.new(:reqd => true, :key => :processor, :type => Proc),
   ]
@@ -12,7 +12,7 @@ class MessageInPort
   attr_reader :name, :link
   
   def initialize args
-    hash_make args
+    hash_make MessageInPort::ARG_SPECS, args
     @queue = []
     @link = nil
   end

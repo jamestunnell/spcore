@@ -11,7 +11,7 @@ class Oscillator
 
   WAVES = [WAVE_SINE, WAVE_TRIANGLE, WAVE_SAWTOOTH, WAVE_SQUARE]
   
-  HASHED_ARGS = [
+  ARG_SPECS = [
     HashedArg.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
     HashedArg.new(:reqd => false, :key => :wave_type, :type => Symbol, :default => WAVE_SINE, :validator => ->(a){ WAVES.include? a } ),
     HashedArg.new(:reqd => false, :key => :frequency, :type => Float, :default => 1.0, :validator => ->(a){ a > 0.0 } ),
@@ -21,7 +21,7 @@ class Oscillator
   ]
 
   def initialize args
-    hash_make args
+    hash_make Oscillator::ARG_SPECS, args
     
     @phase_angle_incr = (@frequency * TWO_PI) / @sample_rate
     @current_phase_angle = @phase_angle

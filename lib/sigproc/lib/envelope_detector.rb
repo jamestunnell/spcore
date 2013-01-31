@@ -2,7 +2,7 @@ module SigProc
 class EnvelopeDetector
   include HashMake
   
-  HASHED_ARGS = [
+  ARG_SPECS = [
     HashedArg.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
     HashedArg.new(:reqd => true, :key => :attack_time, :type => Float, :validator => ->(a){ a > 0.0 } ),
     HashedArg.new(:reqd => true, :key => :release_time, :type => Float, :validator => ->(a){ a > 0.0 } ),
@@ -11,7 +11,7 @@ class EnvelopeDetector
   attr_reader :envelope, :sample_rate, :attack_time, :release_time
   
   def initialize args
-    hash_make args
+    hash_make EnvelopeDetector::ARG_SPECS, args
 
     @g_attack = Math.exp(-1.0 / (sample_rate * attack_time))
     @g_release = Math.exp(-1.0 / (sample_rate * release_time))

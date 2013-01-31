@@ -4,14 +4,14 @@ class DelayLine
   
   attr_reader :sample_rate, :max_delay_seconds, :delay_seconds, :delay_samples
   
-  HASHED_ARGS = [
+  ARG_SPECS = [
     HashedArg.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
     HashedArg.new(:reqd => true, :key => :max_delay_seconds, :type => Float, :validator => ->(a){ (a > 0.0) } ),
     HashedArg.new(:reqd => false, :key => :delay_seconds, :type => Float, :default => ->(){ 0.0 }, :validator => ->(a){ a >= 0.0 } ),
   ]
   
   def initialize args
-    hash_make args
+    hash_make DelayLine::ARG_SPECS, args
     raise ArgumentError, "delay_seconds #{delay_seconds} is greater than max_delay_seconds #{max_delay_seconds}" if @delay_seconds > @max_delay_seconds
     @buffer = CircularBuffer.new((@sample_rate * @max_delay_seconds) + 1, :override_when_full => true)
     self.delay_seconds=(@delay_seconds)
