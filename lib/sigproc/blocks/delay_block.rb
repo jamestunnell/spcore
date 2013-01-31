@@ -21,13 +21,19 @@ class DelayBlock < Block
     )
     
     limiter = Limiters.make_range_limiter(0..@delay_line.max_delay_seconds)
-    delay_sec_handler = lambda do |delay_sec|
-      @delay_line.delay_seconds = limiter.call(delay_sec)
+    set_delay_sec_handler = lambda do |message|
+      @delay_line.delay_seconds = limiter.call(message.data)
     end
+
+    get_delay_sec_handler = lambda do |message|
+      message.data = @delay_line.delay_seconds
+    end
+    
+    delay_sec_handler = ControlMessage.make_handler get_delay_sec_handler, set_delay_sec_handler
     
     input = SignalInPort.new(:name => "INPUT")
     output = SignalOutPort.new(:name => "OUTPUT")
-    delay_sec = MessageInPort.new(:name => "DELAY_SEC", :processor => delay_sec_handler)
+    delay_sec = MessageInPort.new(:name => "DELAY_SEC", :message_type => Message::CONTROL, :processor => delay_sec_handler)
     
     algorithm = lambda do
       values = input.dequeue_values

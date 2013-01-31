@@ -5,14 +5,14 @@ describe SigProc::MessageOutPort do
     processor = lambda do |message|
       return message
     end
-    @in_port = SigProc::MessageInPort.new :processor => processor
+    @in_port = SigProc::MessageInPort.new :processor => processor, :message_type => SigProc::Message::CONTROL
   end
 
   before :each do
     processor = lambda do |message|
       return message
     end
-    @in_port = SigProc::MessageInPort.new :processor => processor
+    @in_port = SigProc::MessageInPort.new :processor => processor, :message_type => SigProc::Message::CONTROL
     @out_port = SigProc::MessageOutPort.new
   end
 
@@ -50,8 +50,8 @@ describe SigProc::MessageOutPort do
   describe '#send_message' do
     it 'should pass the given message via recv_message to the processing callback' do
       @out_port.add_link @in_port
-      rv = @out_port.send_message 5
-      rv.first.should eq(5)
+      rv = @out_port.send_message SigProc::ControlMessage.make_set_message(5)
+      rv.first.data.should eq(5)
     end
   end
 end

@@ -7,6 +7,7 @@ class MessageInPort
   ARG_SPECS = [
     HashedArg.new(:reqd => false, :key => :name, :type => String, :default => "UNNAMED"),
     HashedArg.new(:reqd => true, :key => :processor, :type => Proc),
+    HashedArg.new(:reqd => true, :key => :message_type, :type => Symbol, :validator => ->(a){ Message::TYPES.include?(a) })
   ]
   
   attr_reader :name, :link
@@ -18,7 +19,13 @@ class MessageInPort
   end
   
   def recv_message message
-    return @processor.call(message)
+    raise ArgumentError, "message is not a Message" unless message.is_a?(Message)
+    if message.type == @message_type
+      return @processor.call(message)
+    else
+      raise ArgumentError, "message.type #{message.type} is not supported on this port"
+    end
+    
   end
   
   def clear_link

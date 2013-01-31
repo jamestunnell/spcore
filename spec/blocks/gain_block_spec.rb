@@ -30,13 +30,15 @@ describe SigProc::GainBlock do
     end
 
     it 'should set gain to -20.0' do
-      @block.find_first_port("GAIN_DB").recv_message(-20.0)
+      message = SigProc::ControlMessage.make_set_message(-20.0)
+      @block.find_first_port("GAIN_DB").recv_message(message)
       @block.step
       @reciever.queue.first.should eq(SigProc::Gain.db_to_linear(-20.0) * @values.first)
     end
     
     it 'should set gain to +20.0' do
-      @block.find_first_port("GAIN_DB").recv_message(20.0)
+      message = SigProc::ControlMessage.make_set_message(20.0)
+      @block.find_first_port("GAIN_DB").recv_message(message)
       @block.step
       @reciever.queue.first.should eq(SigProc::Gain.db_to_linear(20.0) * @values.first)
     end

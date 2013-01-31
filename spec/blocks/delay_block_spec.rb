@@ -38,7 +38,8 @@ describe SigProc::DelayBlock do
         @values = [rand_sample] + Array.new(delay_samples, 0.0)
         @block.find_first_port("INPUT").enqueue_values @values
   
-        @block.find_first_port("DELAY_SEC").recv_message(delay_sec)
+        message = SigProc::ControlMessage.make_set_message delay_sec
+        @block.find_first_port("DELAY_SEC").recv_message(message)
         @block.step
         @reciever.queue.last.should eq(rand_sample)
       end

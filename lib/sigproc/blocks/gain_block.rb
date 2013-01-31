@@ -16,14 +16,20 @@ class GainBlock < Block
     @gain_linear = Gain.db_to_linear @gain_db
     
     limiter = Limiters.make_range_limiter(GAIN_MIN..GAIN_MAX)
-    gain_db_handler = lambda do |gain_db|
-      @gain_db = limiter.call(gain_db)
+    set_gain_db_handler = lambda do |message|
+      @gain_db = limiter.call(message.data)
       @gain_linear = Gain.db_to_linear @gain_db
     end
     
+    get_gain_db_handler = lambda do |message|
+      message.data = @gain_db
+    end
+    
+    gain_db_handler = ControlMessage.make_handler get_gain_db_handler, set_gain_db_handler
+    
     input = SignalInPort.new(:name => "INPUT")
     output = SignalOutPort.new(:name => "OUTPUT")
-    gain_db = MessageInPort.new(:name => "GAIN_DB", :processor => gain_db_handler)
+    gain_db = MessageInPort.new(:name => "GAIN_DB", :message_type => Message::CONTROL, :processor => gain_db_handler)
     
     algorithm = lambda do
       values = input.dequeue_values

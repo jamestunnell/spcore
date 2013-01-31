@@ -20,6 +20,8 @@ require 'sigproc/lib/saturation'
 
 require 'sigproc/network/signal_in_port'
 require 'sigproc/network/signal_out_port'
+require 'sigproc/network/message'
+require 'sigproc/network/control_message'
 require 'sigproc/network/message_in_port'
 require 'sigproc/network/message_out_port'
 require 'sigproc/network/block'
