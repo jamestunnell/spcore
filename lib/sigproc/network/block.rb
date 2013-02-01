@@ -35,8 +35,8 @@ class Block
     return find_ports(name, ignore_case).first
   end
   
-  def step
-    @algorithm.call
+  def step count
+    @algorithm.call count
   end
 end
 end

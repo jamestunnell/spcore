@@ -1,8 +1,8 @@
 module SigProc
 class Oscillator
   include HashMake
-  attr_accessor :wave_type, :amplitude, :dc_bias
-  attr_reader :frequency, :sample_rate, :phase_angle
+  attr_accessor :wave_type, :amplitude, :dc_offset
+  attr_reader :frequency, :sample_rate, :phase_offset
   
   WAVE_SINE = :waveSine
   WAVE_TRIANGLE = :waveTriangle
@@ -16,15 +16,15 @@ class Oscillator
     HashedArg.new(:reqd => false, :key => :wave_type, :type => Symbol, :default => WAVE_SINE, :validator => ->(a){ WAVES.include? a } ),
     HashedArg.new(:reqd => false, :key => :frequency, :type => Float, :default => 1.0, :validator => ->(a){ a > 0.0 } ),
     HashedArg.new(:reqd => false, :key => :amplitude, :type => Float, :default => 1.0 ),
-    HashedArg.new(:reqd => false, :key => :phase_angle, :type => Float, :default => 0.0 ),
-    HashedArg.new(:reqd => false, :key => :dc_bias, :type => Float, :default => 0.0 ),
+    HashedArg.new(:reqd => false, :key => :phase_offset, :type => Float, :default => 0.0 ),
+    HashedArg.new(:reqd => false, :key => :dc_offset, :type => Float, :default => 0.0 ),
   ]
 
   def initialize args
     hash_make Oscillator::ARG_SPECS, args
     
     @phase_angle_incr = (@frequency * TWO_PI) / @sample_rate
-    @current_phase_angle = @phase_angle
+    @current_phase_angle = @phase_offset
   end
   
   def sample_rate= sample_rate
@@ -37,9 +37,9 @@ class Oscillator
     @phase_angle_incr = (@frequency * TWO_PI) / @sample_rate
   end
   
-  def phase_angle= phase_angle
-    @current_phase_angle += (phase_angle - @phase_angle);
-    @phase_angle = phase_angle
+  def phase_offset= phase_offset
+    @current_phase_angle += (phase_offset - @phase_offset);
+    @phase_offset = phase_offset
   end
 
   def sample
@@ -55,13 +55,13 @@ class Oscillator
 
     case @wave_type
     when WAVE_SINE
-      output = @amplitude * sine(@current_phase_angle) + @dc_bias
+      output = @amplitude * sine(@current_phase_angle) + @dc_offset
     when WAVE_TRIANGLE
-      output = @amplitude * triangle(@current_phase_angle) + @dc_bias
+      output = @amplitude * triangle(@current_phase_angle) + @dc_offset
     when WAVE_SQUARE
-      output = @amplitude * square(@current_phase_angle) + @dc_bias
+      output = @amplitude * square(@current_phase_angle) + @dc_offset
     when WAVE_SAWTOOTH
-      output = @amplitude * sawtooth(@current_phase_angle) + @dc_bias
+      output = @amplitude * sawtooth(@current_phase_angle) + @dc_offset
     else
       raise "Encountered unexpected wave type #{@wave_type}"
     end

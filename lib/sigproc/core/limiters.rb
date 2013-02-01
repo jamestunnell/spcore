@@ -37,5 +37,15 @@ class Limiters
       end
     end
   end
+  
+  def self.make_enum_limiter good_values
+    return lambda do |input, current|
+      if good_values.include?(input)
+        return input
+      else
+        return current
+      end
+    end
+  end
 end
 end

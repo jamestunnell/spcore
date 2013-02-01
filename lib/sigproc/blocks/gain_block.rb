@@ -9,8 +9,6 @@ class GainBlock < Block
     HashedArg.new(:reqd => false, :key => :gain_db, :type => Float, :default => 0.0, :validator => ->(a){ a >= GAIN_MIN && a <= GAIN_MAX } ),
   ]
   
-  attr_reader :gain_db
-  
   def initialize args = {}
     hash_make HASHED_ARG_SPECS, args
     @gain_linear = Gain.db_to_linear @gain_db
@@ -31,8 +29,8 @@ class GainBlock < Block
     output = SignalOutPort.new(:name => "OUTPUT")
     gain_db = MessageInPort.new(:name => "GAIN_DB", :message_type => Message::CONTROL, :processor => gain_db_handler)
     
-    algorithm = lambda do
-      values = input.dequeue_values
+    algorithm = lambda do |count|
+      values = input.dequeue_values count
       for i in 0...values.count
         values[i] *= @gain_linear
       end

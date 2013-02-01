@@ -28,3 +28,4 @@ require 'sigproc/network/block'
 
 require 'sigproc/blocks/gain_block'
 require 'sigproc/blocks/delay_block'
+require 'sigproc/blocks/oscillator_block'

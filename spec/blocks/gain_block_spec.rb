@@ -7,7 +7,9 @@ describe SigProc::GainBlock do
     end
     
     it 'should have default gain of 0 db' do
-      @block.gain_db.should eq(0.0)
+      message = SigProc::ControlMessage.make_get_message
+      @block.find_first_port("GAIN_DB").recv_message(message)
+      message.data.should eq(0.0)
     end
     
     it 'should pass through values unchanged' do
@@ -15,7 +17,7 @@ describe SigProc::GainBlock do
       values = [ 1.0, 2.0, -1.0 ]
       @block.signal_out_ports.first.add_link reciever
       @block.signal_in_ports.first.enqueue_values values
-      @block.step
+      @block.step 3
       reciever.queue.should eq(values)
     end
   end
@@ -32,14 +34,14 @@ describe SigProc::GainBlock do
     it 'should set gain to -20.0' do
       message = SigProc::ControlMessage.make_set_message(-20.0)
       @block.find_first_port("GAIN_DB").recv_message(message)
-      @block.step
+      @block.step 3
       @reciever.queue.first.should eq(SigProc::Gain.db_to_linear(-20.0) * @values.first)
     end
     
     it 'should set gain to +20.0' do
       message = SigProc::ControlMessage.make_set_message(20.0)
       @block.find_first_port("GAIN_DB").recv_message(message)
-      @block.step
+      @block.step 3
       @reciever.queue.first.should eq(SigProc::Gain.db_to_linear(20.0) * @values.first)
     end
   end
