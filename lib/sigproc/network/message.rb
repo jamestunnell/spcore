@@ -4,10 +4,9 @@ class Message
   include HashMake
   
   CONTROL = :messageTypeControl
+  COMMAND = :messageTypeCommand
   
-  TYPES = [
-    CONTROL
-  ]
+  TYPES = [ CONTROL, COMMAND ]
   
   HASHED_ARGS_SPECS = [
     HashedArg.new(:reqd => true, :key => :type, :type => Symbol, :validator => ->(a){ TYPES.include?(a) } ),
