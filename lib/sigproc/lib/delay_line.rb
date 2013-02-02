@@ -14,6 +14,7 @@ class DelayLine
     hash_make DelayLine::ARG_SPECS, args
     raise ArgumentError, "delay_seconds #{delay_seconds} is greater than max_delay_seconds #{max_delay_seconds}" if @delay_seconds > @max_delay_seconds
     @buffer = CircularBuffer.new((@sample_rate * @max_delay_seconds) + 1, :override_when_full => true)
+    @buffer.push_ary Array.new(@buffer.size, 0.0)
     self.delay_seconds=(@delay_seconds)
   end
   
@@ -22,9 +23,9 @@ class DelayLine
     @delay_samples = delay_samples_floor.to_i
     @delay_seconds = delay_samples_floor / @sample_rate
     
-    if @buffer.fill_count < @delay_samples
-      @buffer.push_ary Array.new(@delay_samples - @buffer.fill_count, 0.0)
-    end
+    #if @buffer.fill_count < @delay_samples
+    #  @buffer.push_ary Array.new(@delay_samples - @buffer.fill_count, 0.0)
+    #end
   end
   
   def push_sample sample
