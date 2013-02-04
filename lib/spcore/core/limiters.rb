@@ -1,4 +1,4 @@
-module SigProc
+module SPCore
 class Limiters
   def self.make_no_limiter
     return lambda do |input|

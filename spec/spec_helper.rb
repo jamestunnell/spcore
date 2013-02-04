@@ -1,4 +1,4 @@
 require 'rspec'
-require 'sigproc'
+require 'spcore'
 
-include Sigproc
+include SPCore

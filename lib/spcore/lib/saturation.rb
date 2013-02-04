@@ -1,4 +1,4 @@
-module SigProc
+module SPCore
 class Saturation
   # Sigmoid-based saturation when input is above threshold.
   # From musicdsp.org, posted by Bram.

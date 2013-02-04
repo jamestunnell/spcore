@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'sigproc'
+require 'spcore'
 
-describe Sigproc do
+describe SPCore do
   it "should have a VERSION constant" do
     subject.const_get('VERSION').should_not be_empty
   end

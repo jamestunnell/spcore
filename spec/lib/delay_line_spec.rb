@@ -1,12 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe SigProc::DelayLine do
+describe SPCore::DelayLine do
   it 'should' do
     SAMPLE_RATE = 44100.0
     MAX_DELAY_SEC = 0.1
     
     5.times do
-      delay_line = SigProc::DelayLine.new(
+      delay_line = SPCore::DelayLine.new(
         :sample_rate => SAMPLE_RATE,
         :max_delay_seconds => MAX_DELAY_SEC,
         :delay_seconds => (rand * MAX_DELAY_SEC)

@@ -1,4 +1,4 @@
-module SigProc
+module SPCore
 class Oscillator
   include Hashmake::HashMakeable
   attr_accessor :wave_type, :amplitude, :dc_offset

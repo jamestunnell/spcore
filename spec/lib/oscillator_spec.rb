@@ -2,11 +2,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'gnuplot'
 require 'pry'
 
-describe SigProc::Oscillator do
+describe SPCore::Oscillator do
   #it 'should look like a ...' do
   #  sample_rate = 44000.0
   #  test_freq = 100.0
-  #  osc = SigProc::Oscillator.new :sample_rate => sample_rate, :frequency => test_freq, :wave_type => SigProc::Oscillator::WAVE_SQUARE
+  #  osc = SPCore::Oscillator.new :sample_rate => sample_rate, :frequency => test_freq, :wave_type => SPCore::Oscillator::WAVE_SQUARE
   #  N = (5 * sample_rate / test_freq).to_i
   #  period = 1.0 / N
   #  
@@ -39,10 +39,10 @@ describe SigProc::Oscillator do
   describe '#triangle' do
     it "should produce increasing samples during first half-period, and decreasing samples during the second half-period" do
       @freqs.each do |freq|
-        wave = SigProc::Oscillator.new(
+        wave = SPCore::Oscillator.new(
           :sample_rate => @sample_rate,
           :frequency => freq,
-          :wave_type => SigProc::Oscillator::WAVE_TRIANGLE
+          :wave_type => SPCore::Oscillator::WAVE_TRIANGLE
         )
         
         samples_in_half_period = @sample_rate / (2.0 * freq)
@@ -73,10 +73,10 @@ describe SigProc::Oscillator do
   describe '#square' do
       it "should produce 1 during first half-period, and -1 during second half-period" do
       @freqs.each do |freq|
-        wave = SigProc::Oscillator.new(
+        wave = SPCore::Oscillator.new(
           :sample_rate => @sample_rate,
           :frequency => freq,
-          :wave_type => SigProc::Oscillator::WAVE_SQUARE
+          :wave_type => SPCore::Oscillator::WAVE_SQUARE
         )
     
         samples_in_half_period = @sample_rate / (2.0 * freq)
@@ -99,10 +99,10 @@ describe SigProc::Oscillator do
     it "should produce increasing samples" do
 
       @freqs.each do |freq|
-        wave = SigProc::Oscillator.new(
+        wave = SPCore::Oscillator.new(
           :sample_rate => @sample_rate,
           :frequency => freq,
-          :wave_type => SigProc::Oscillator::WAVE_SAWTOOTH
+          :wave_type => SPCore::Oscillator::WAVE_SAWTOOTH
         )
 
         samples_in_period = (@sample_rate / freq).to_i
@@ -125,10 +125,10 @@ describe SigProc::Oscillator do
   describe '#sine' do
     it "should produce zero during every half-period, and non-zeros between" do
       @freqs.each do |freq|
-        wave = SigProc::Oscillator.new(
+        wave = SPCore::Oscillator.new(
           :sample_rate => @sample_rate,
           :frequency => freq,
-          :wave_type => SigProc::Oscillator::WAVE_SINE
+          :wave_type => SPCore::Oscillator::WAVE_SINE
         )
         
         samples_in_half_period = @sample_rate / (2.0 * freq)

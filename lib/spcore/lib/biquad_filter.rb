@@ -1,4 +1,4 @@
-module SigProc
+module SPCore
 
 # Based on the "simple implementation of Biquad filters" by Tom St Denis,
 # which is based on the work "Cookbook formulae for audio EQ biquad filter

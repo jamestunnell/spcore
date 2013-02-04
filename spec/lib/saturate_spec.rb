@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'gnuplot'
 
-describe SigProc::Saturation do
+describe SPCore::Saturation do
   describe '.tanh' do
     it 'should not saturate below the threshold' do
       t = 1.0 # threshold
@@ -10,17 +10,17 @@ describe SigProc::Saturation do
       y_data = []
       z_data = []
       
-      osc = SigProc::Oscillator.new(
+      osc = SPCore::Oscillator.new(
         :sample_rate => 100.0,
         :frequency => 1.0,
-        :wave_type => SigProc::Oscillator::WAVE_SINE,
+        :wave_type => SPCore::Oscillator::WAVE_SINE,
         :amplitude => 2.5
       )
       
       (4 * osc.sample_rate / osc.frequency).to_i.times do |n|
         x = n / osc.sample_rate
         y = osc.sample
-        z = SigProc::Saturation.sigmoid y, t
+        z = SPCore::Saturation.sigmoid y, t
         
         if y.abs < t
           z.should eq(y)
@@ -62,11 +62,11 @@ describe SigProc::Saturation do
       y_data = []
       z_data = []
       
-      osc = SigProc::Oscillator.new :sample_rate => 100.0, :frequency => 1.0, :wave_type => SigProc::Oscillator::WAVE_SINE, :amplitude => 2.5
+      osc = SPCore::Oscillator.new :sample_rate => 100.0, :frequency => 1.0, :wave_type => SPCore::Oscillator::WAVE_SINE, :amplitude => 2.5
       (4 * osc.sample_rate / osc.frequency).to_i.times do |n|
         x = n / osc.sample_rate
         y = osc.sample
-        z = SigProc::Saturation.gompertz y, t
+        z = SPCore::Saturation.gompertz y, t
         
         #z.should ???
 

@@ -1,4 +1,4 @@
-module SigProc
+module SPCore
 class Interpolation
   # Linear Interpolation Equation:
   #

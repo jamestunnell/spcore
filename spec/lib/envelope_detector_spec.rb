@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe SigProc::EnvelopeDetector do
+describe SPCore::EnvelopeDetector do
   describe '#process_sample' do
     it 'should produce an output that follows the amplitude of the input' do
       sample_rate = 10000.0
@@ -10,8 +10,8 @@ describe SigProc::EnvelopeDetector do
       envelope_end = 0.0
       
       freqs.each do |freq|
-        osc = SigProc::Oscillator.new :sample_rate => sample_rate, :frequency => freq, :amplitude => envelope_start
-        detector = SigProc::EnvelopeDetector.new :sample_rate => sample_rate, :attack_time => (1e-2 / freq), :release_time => (1.0 / freq)
+        osc = SPCore::Oscillator.new :sample_rate => sample_rate, :frequency => freq, :amplitude => envelope_start
+        detector = SPCore::EnvelopeDetector.new :sample_rate => sample_rate, :attack_time => (1e-2 / freq), :release_time => (1.0 / freq)
         
         # 1 full period to acclimate the detector to the starting envelope
         (sample_rate / freq).to_i .times do
@@ -26,7 +26,7 @@ describe SigProc::EnvelopeDetector do
         sample_count = (5.0 * sample_rate / freq).to_i
         sample_count.times do |n|
           percent = n.to_f / sample_count
-          amplitude = SigProc::Interpolation.linear 0.0, envelope_start, 1.0, envelope_end, percent
+          amplitude = SPCore::Interpolation.linear 0.0, envelope_start, 1.0, envelope_end, percent
           osc.amplitude = amplitude
           
           sample = osc.sample

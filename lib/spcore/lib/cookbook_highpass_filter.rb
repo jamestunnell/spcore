@@ -1,4 +1,4 @@
-module SigProc
+module SPCore
 class CookbookHighpassFilter < BiquadFilter
   def initialize sample_rate
     super(sample_rate)

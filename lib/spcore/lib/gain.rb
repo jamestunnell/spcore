@@ -1,4 +1,4 @@
-module SigProc
+module SPCore
 class Gain
   
   #MAX_DB = 72

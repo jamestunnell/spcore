@@ -1,4 +1,10 @@
-=== 0.1.0 / 2013-01-21
+=== 0.1.0 / 2013-02-04
 
 * Initial release:
+** Delay line
+** Biquad filters
+** Envelope detector
+** Conversion from dB-linear and linear-dB
+** Linear interpolation
+** Oscillator with selectable wave type (sine, square, triangle, sawtooth)
 

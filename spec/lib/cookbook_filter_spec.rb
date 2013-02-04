@@ -8,7 +8,7 @@ describe 'cookbook filter' do
   #  crit_freq = 1000.0
   #  max_test_freq = 10000.0
   #  bw = 2
-  #  filter = SigProc::CookbookNotchFilter.new sample_rate
+  #  filter = SPCore::CookbookNotchFilter.new sample_rate
   #  filter.set_critical_freq_and_bw crit_freq, bw
   #  
   #  freqs = []
@@ -20,7 +20,7 @@ describe 'cookbook filter' do
   #  200.times do
   #    mag = filter.get_freq_magnitude_response test_freq
   #
-  #    dbs << SigProc::Gain.linear_to_db(mag)
+  #    dbs << SPCore::Gain.linear_to_db(mag)
   #    freqs << test_freq
   #    
   #    test_freq *= 1.035

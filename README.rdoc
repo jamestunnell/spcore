@@ -1,24 +1,31 @@
-= sigproc
+= spcore
 
-* {Homepage}[https://rubygems.org/gems/sigproc]
-* {Documentation}[http://rubydoc.info/gems/sigproc/frames]
+* {Homepage}[https://rubygems.org/gems/spcore]
+* {Documentation}[http://rubydoc.info/gems/spcore/frames]
 * {Email}[mailto:jamestunnell at lavabit.com]
 
 == Description
 
-TODO: Description
+Contains core signal processing functions. 
 
 == Features
 
+Delay line
+Biquad filters
+Envelope detector
+Conversion from dB-linear and linear-dB
+Linear interpolation
+Oscillator with selectable wave type (sine, square, triangle, sawtooth)
+
 == Examples
 
-  require 'sigproc'
+  require 'spcore'
 
 == Requirements
 
 == Install
 
-  $ gem install sigproc
+  $ gem install spcore
 
 == Copyright
 

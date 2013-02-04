@@ -1,4 +1,4 @@
-module SigProc
+module SPCore
 class CircularBuffer
   
   attr_accessor :fifo, :override_when_full

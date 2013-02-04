@@ -1,5 +1,5 @@
-module SigProc
-class CookbookNotchFilter < BiquadFilter
+module SPCore
+class CookbookBandpassFilter < BiquadFilter
   def initialize sample_rate
     super(sample_rate)
   end
@@ -14,9 +14,9 @@ class CookbookNotchFilter < BiquadFilter
     cs = Math::cos(omega)
     alpha = sn * Math::sinh(BiquadFilter::LN_2 / 2.0 * @bandwidth * omega / sn)
 
-    b0 = 1.0
-    b1 = -2.0 * cs
-    b2 = 1.0
+    b0 = alpha
+    b1 = 0.0
+    b2 = -alpha
     a0 = 1.0 + alpha
     a1 = -2.0 * cs
     a2 = 1.0 - alpha
