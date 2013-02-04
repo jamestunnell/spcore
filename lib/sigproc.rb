@@ -17,8 +17,3 @@ require 'sigproc/lib/cookbook_lowpass_filter'
 require 'sigproc/lib/cookbook_notch_filter'
 require 'sigproc/lib/envelope_detector'
 require 'sigproc/lib/saturation'
-
-require 'sigproc/blocks/gain_block'
-require 'sigproc/blocks/delay_block'
-require 'sigproc/blocks/oscillator_block'
-require 'sigproc/blocks/file_out_block'
