@@ -20,6 +20,8 @@ DESCRIPTION
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ['lib']
 
+  gem.add_dependency 'hashmake'
+  gem.add_dependency 'spnet', '~> 0.1.1'
   gem.add_dependency 'wavefile'
 
   gem.add_development_dependency 'bundler', '~> 1.0'

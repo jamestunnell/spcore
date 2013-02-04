@@ -1,13 +1,14 @@
+require 'spnet'
 require 'wavefile'
 
 module SigProc
-class FileOutBlock < Block
+class FileOutBlock < SPNet::Block
 
-  include HashMake
+  include Hashmake::HashMakeable
   
   HASHED_ARG_SPECS = [
-    HashedArg.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ (a > 0.0) && (a.to_i == a)} ),
-    HashedArg.new(:reqd => true, :key => :file_name, :type => String, :validator => ->(a){ !a.empty?() } ),
+    Hashmake::ArgSpec.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ (a > 0.0) && (a.to_i == a)} ),
+    Hashmake::ArgSpec.new(:reqd => true, :key => :file_name, :type => String, :validator => ->(a){ !a.empty?() } ),
   ]
 
   BITS_PER_SAMPLE = 32
@@ -34,7 +35,7 @@ class FileOutBlock < Block
     @format = WaveFile::Format.new(:mono, 32, @sample_rate.to_i)
     @writer = WaveFile::Writer.new(@file_name, @format)
 
-    input = SignalInPort.new(:name => "INPUT", :limits => (-1.0...1.0))
+    input = SPNet::SignalInPort.new(:name => "INPUT", :limits => (-1.0...1.0))
     algorithm = lambda do |count|
       values = input.dequeue_values count
       unless closed?

@@ -1,12 +1,14 @@
+require 'spnet'
+
 module SigProc
-class GainBlock < Block
-  include HashMake
+class GainBlock < SPNet::Block
+  include Hashmake::HashMakeable
   
   GAIN_MIN = -Gain::MAX_DB_ABS
   GAIN_MAX = Gain::MAX_DB_ABS
   
   HASHED_ARG_SPECS = [
-    HashedArg.new(:reqd => false, :key => :gain_db, :type => Float, :default => 0.0, :validator => ->(a){ a >= GAIN_MIN && a <= GAIN_MAX } ),
+    Hashmake::ArgSpec.new(:reqd => false, :key => :gain_db, :type => Float, :default => 0.0, :validator => ->(a){ a >= GAIN_MIN && a <= GAIN_MAX } ),
   ]
   
   def initialize args = {}
@@ -23,11 +25,11 @@ class GainBlock < Block
       message.data = @gain_db
     end
     
-    gain_db_handler = ControlMessage.make_handler get_gain_db_handler, set_gain_db_handler
+    gain_db_handler = SPNet::ControlMessage.make_handler get_gain_db_handler, set_gain_db_handler
     
-    input = SignalInPort.new(:name => "INPUT")
-    output = SignalOutPort.new(:name => "OUTPUT")
-    gain_db = MessageInPort.new(:name => "GAIN_DB", :message_type => Message::CONTROL, :processor => gain_db_handler)
+    input = SPNet::SignalInPort.new(:name => "INPUT")
+    output = SPNet::SignalOutPort.new(:name => "OUTPUT")
+    gain_db = SPNet::MessageInPort.new(:name => "GAIN_DB", :message_type => SPNet::Message::CONTROL, :processor => gain_db_handler)
     
     algorithm = lambda do |count|
       values = input.dequeue_values count

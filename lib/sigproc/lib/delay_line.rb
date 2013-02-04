@@ -1,13 +1,13 @@
 module SigProc
 class DelayLine
-  include HashMake
+  include Hashmake::HashMakeable
   
   attr_reader :sample_rate, :max_delay_seconds, :delay_seconds, :delay_samples
   
   ARG_SPECS = [
-    HashedArg.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
-    HashedArg.new(:reqd => true, :key => :max_delay_seconds, :type => Float, :validator => ->(a){ (a > 0.0) } ),
-    HashedArg.new(:reqd => false, :key => :delay_seconds, :type => Float, :default => 0.0, :validator => ->(a){ a >= 0.0 } ),
+    Hashmake::ArgSpec.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    Hashmake::ArgSpec.new(:reqd => true, :key => :max_delay_seconds, :type => Float, :validator => ->(a){ (a > 0.0) } ),
+    Hashmake::ArgSpec.new(:reqd => false, :key => :delay_seconds, :type => Float, :default => 0.0, :validator => ->(a){ a >= 0.0 } ),
   ]
   
   def initialize args

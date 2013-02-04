@@ -3,13 +3,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe SigProc::OscillatorBlock do
   def set_port_value block, port_name, value
     port = block.find_first_port(port_name)
-    set_msg = SigProc::ControlMessage.make_set_message value
+    set_msg = SPNet::ControlMessage.make_set_message value
     return port.recv_message set_msg
   end
   
   def get_port_value block, port_name
     port = block.find_first_port(port_name)
-    get_msg = SigProc::ControlMessage.make_get_message
+    get_msg = SPNet::ControlMessage.make_get_message
     port.recv_message get_msg
     return get_msg.data
   end
@@ -71,7 +71,7 @@ describe SigProc::OscillatorBlock do
           set_port_value(block, name, value)
         end
         
-        block_receiver = SigProc::SignalInPort.new
+        block_receiver = SPNet::SignalInPort.new
         block.find_first_port("OUTPUT").add_link(block_receiver)
         block.step 50
         

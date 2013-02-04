@@ -1,11 +1,11 @@
 module SigProc
 class EnvelopeDetector
-  include HashMake
+  include Hashmake::HashMakeable
   
   ARG_SPECS = [
-    HashedArg.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
-    HashedArg.new(:reqd => true, :key => :attack_time, :type => Float, :validator => ->(a){ a > 0.0 } ),
-    HashedArg.new(:reqd => true, :key => :release_time, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    Hashmake::ArgSpec.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    Hashmake::ArgSpec.new(:reqd => true, :key => :attack_time, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    Hashmake::ArgSpec.new(:reqd => true, :key => :release_time, :type => Float, :validator => ->(a){ a > 0.0 } ),
   ]
 
   attr_reader :envelope, :sample_rate, :attack_time, :release_time

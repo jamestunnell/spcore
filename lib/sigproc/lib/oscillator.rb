@@ -1,6 +1,6 @@
 module SigProc
 class Oscillator
-  include HashMake
+  include Hashmake::HashMakeable
   attr_accessor :wave_type, :amplitude, :dc_offset
   attr_reader :frequency, :sample_rate, :phase_offset
   
@@ -12,12 +12,12 @@ class Oscillator
   WAVES = [WAVE_SINE, WAVE_TRIANGLE, WAVE_SAWTOOTH, WAVE_SQUARE]
   
   ARG_SPECS = [
-    HashedArg.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
-    HashedArg.new(:reqd => false, :key => :wave_type, :type => Symbol, :default => WAVE_SINE, :validator => ->(a){ WAVES.include? a } ),
-    HashedArg.new(:reqd => false, :key => :frequency, :type => Float, :default => 1.0, :validator => ->(a){ a > 0.0 } ),
-    HashedArg.new(:reqd => false, :key => :amplitude, :type => Float, :default => 1.0 ),
-    HashedArg.new(:reqd => false, :key => :phase_offset, :type => Float, :default => 0.0 ),
-    HashedArg.new(:reqd => false, :key => :dc_offset, :type => Float, :default => 0.0 ),
+    Hashmake::ArgSpec.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    Hashmake::ArgSpec.new(:reqd => false, :key => :wave_type, :type => Symbol, :default => WAVE_SINE, :validator => ->(a){ WAVES.include? a } ),
+    Hashmake::ArgSpec.new(:reqd => false, :key => :frequency, :type => Float, :default => 1.0, :validator => ->(a){ a > 0.0 } ),
+    Hashmake::ArgSpec.new(:reqd => false, :key => :amplitude, :type => Float, :default => 1.0 ),
+    Hashmake::ArgSpec.new(:reqd => false, :key => :phase_offset, :type => Float, :default => 0.0 ),
+    Hashmake::ArgSpec.new(:reqd => false, :key => :dc_offset, :type => Float, :default => 0.0 ),
   ]
 
   def initialize args

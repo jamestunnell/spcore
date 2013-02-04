@@ -1,9 +1,10 @@
+require 'spnet'
 #require 'wavefile.rb'
 #
 #module SigProc
-#class FileInBlock < Block
+#class FileInBlock < SPNet::Block
 #  def initialize
-#    output = SignalOutPort.new(:name => "OUTPUT")
+#    output = SPNet::SignalOutPort.new(:name => "OUTPUT")
 #    
 #    algorithm = lambda do |count|
 #      values = Array.new(count)

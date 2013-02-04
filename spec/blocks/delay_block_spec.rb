@@ -7,13 +7,13 @@ describe SigProc::DelayBlock do
     end
     
     it 'should have default delay time of 0.0 sec' do
-      message = SigProc::ControlMessage.make_get_message
+      message = SPNet::ControlMessage.make_get_message
       @block.find_first_port("DELAY_SEC").recv_message(message)
       message.data.should eq(0.0)
     end
     
     it 'should pass through values unchanged' do
-      reciever = SigProc::SignalInPort.new
+      reciever = SPNet::SignalInPort.new
       values = [ 1.0, 2.0, -1.0 ]
       @block.signal_out_ports.first.add_link reciever
       @block.signal_in_ports.first.enqueue_values values
@@ -35,12 +35,12 @@ describe SigProc::DelayBlock do
         delay_sec = delay_samples / sample_rate
         rand_sample = rand
 
-        @reciever = SigProc::SignalInPort.new
+        @reciever = SPNet::SignalInPort.new
         @block.find_first_port("OUTPUT").add_link @reciever
         @values = [rand_sample] + Array.new(delay_samples, 0.0)
         @block.find_first_port("INPUT").enqueue_values @values
   
-        message = SigProc::ControlMessage.make_set_message delay_sec
+        message = SPNet::ControlMessage.make_set_message delay_sec
         @block.find_first_port("DELAY_SEC").recv_message(message)
         @block.step delay_samples + 1
         @reciever.queue.last.should eq(rand_sample)
