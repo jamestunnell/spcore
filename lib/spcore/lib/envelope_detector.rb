@@ -19,6 +19,16 @@ class EnvelopeDetector
     @envelope = 0.0
   end
   
+  def attack_time= attack_time
+    raise ArgumentError, "attack_time is <= 0.0" if attack_time <= 0.0
+    @g_attack = Math.exp(-1.0 / (sample_rate * attack_time))
+  end
+
+  def release_time= release_time
+    raise ArgumentError, "release_time is <= 0.0" if release_time <= 0.0
+    @g_release = Math.exp(-1.0 / (sample_rate * release_time))
+  end
+  
   def process_sample sample
     input_abs = sample.abs
       

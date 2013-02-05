@@ -8,3 +8,6 @@
 ** Linear interpolation
 ** Oscillator with selectable wave type (sine, square, triangle, sawtooth)
 
+=== 0.1.1 / 2013-02-04
+
+Add EnvelopeDetector#attack_time= and EnvelopeDetector#release_time=
