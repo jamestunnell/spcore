@@ -3,6 +3,7 @@ require 'spcore/version'
 
 require 'spcore/core/limiters'
 require 'spcore/core/constants'
+require 'spcore/core/window'
 
 require 'spcore/lib/interpolation'
 require 'spcore/lib/circular_buffer'
