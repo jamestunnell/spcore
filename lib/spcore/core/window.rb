@@ -40,9 +40,6 @@ class Window
   def initialize size, window_type
     raise ArgumentError, "window_type #{window_type} is not one of TYPES" unless TYPES.include? window_type
     
-    four_pi = Math::PI * 4.0
-    six_pi = Math::PI * 6.0
-    eight_pi = Math::PI * 8.0
     @data = Array.new(size)
     
     case window_type
@@ -73,7 +70,7 @@ class Window
     when TRIANGLE
       size.times do |n|
         @data[n] = (2.0 / (size + 1)) * (((size + 1) / 2.0) - (n - ((size - 1) / 2.0)).abs)
-      end    
+      end
     when BARTLETT
       size.times do |n|
         @data[n] = (2.0 / (size - 1)) * (((size - 1) / 2.0) - (n - ((size - 1) / 2.0)).abs)
@@ -97,27 +94,27 @@ class Window
       a2 = alpha / 2.0
       
       size.times do |n|
-        @data[n] = a0 - (a1 * Math::cos((TWO_PI * n)/(size - 1))) + (a2 * Math::cos((four_pi * n)/(size - 1)))
+        @data[n] = a0 - (a1 * Math::cos((TWO_PI * n)/(size - 1))) + (a2 * Math::cos((FOUR_PI * n)/(size - 1)))
       end
     when NUTTALL
       a0, a1, a2, a3 = 0.355768, 0.487396, 0.144232, 0.012604
       size.times do |n|
-        @data[n] = a0 - a1 * Math::cos((TWO_PI * n)/(size - 1)) + a2 * Math::cos((four_pi * n)/(size - 1)) - a3 * Math::cos((six_pi * n)/(size - 1))
+        @data[n] = a0 - a1 * Math::cos((TWO_PI * n)/(size - 1)) + a2 * Math::cos((FOUR_PI * n)/(size - 1)) - a3 * Math::cos((SIX_PI * n)/(size - 1))
       end
     when BLACKMAN_HARRIS
       a0, a1, a2, a3 = 0.35875, 0.48829, 0.14128, 0.01168
       size.times do |n|
-        @data[n] = a0 - a1 * Math::cos((TWO_PI * n)/(size - 1)) + a2 * Math::cos((four_pi * n)/(size - 1)) - a3 * Math::cos((six_pi * n)/(size - 1))
+        @data[n] = a0 - a1 * Math::cos((TWO_PI * n)/(size - 1)) + a2 * Math::cos((FOUR_PI * n)/(size - 1)) - a3 * Math::cos((SIX_PI * n)/(size - 1))
       end
     when BLACKMAN_NUTTALL
       a0, a1, a2, a3 = 0.3635819, 0.4891775, 0.1365995, 0.0106411
       size.times do |n|
-        @data[n] = a0 - a1 * Math::cos((TWO_PI * n)/(size - 1)) + a2 * Math::cos((four_pi * n)/(size - 1)) - a3 * Math::cos((six_pi * n)/(size - 1))
+        @data[n] = a0 - a1 * Math::cos((TWO_PI * n)/(size - 1)) + a2 * Math::cos((FOUR_PI * n)/(size - 1)) - a3 * Math::cos((SIX_PI * n)/(size - 1))
       end
     when FLAT_TOP
       a0, a1, a2, a3, a4 = 1.0, 1.93, 1.29, 0.388, 0.032      
       size.times do |n|
-        @data[n] = a0 - a1 * Math::cos((TWO_PI * n)/(size - 1)) + a2 * Math::cos((four_pi * n)/(size - 1)) - a3 * Math::cos((six_pi * n)/(size - 1)) + a4 * Math::cos((eight_pi * n)/(size - 1))
+        @data[n] = a0 - a1 * Math::cos((TWO_PI * n)/(size - 1)) + a2 * Math::cos((FOUR_PI * n)/(size - 1)) - a3 * Math::cos((SIX_PI * n)/(size - 1)) + a4 * Math::cos((eight_pi * n)/(size - 1))
       end
     end
   end
