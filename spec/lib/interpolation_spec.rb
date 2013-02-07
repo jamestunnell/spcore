@@ -1,21 +1,49 @@
+require 'pry'
+require 'benchmark'
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SPCore::Interpolation do
-  context '.interpolate_linear' do
+  context '.linear' do
     it 'should interpolate floating-point values' do
-      x1, y1 = 0.0, 2.0
-      x2, y2 = 1.0, 4.0
-      x3, y3 = 0.5, 3.0
-      result = SPCore::Interpolation.linear x1, y1, x2, y2, x3
-      result.should eq(y3)
+      result = SPCore::Interpolation.linear 2.0, 4.0, 0.5
+      result.should eq(3.0)
     end
 
     it 'should interpolate integer values' do
-      x1, y1 = 0, 20
-      x2, y2 = 10, 40
-      x3, y3 = 5, 30
-      result = SPCore::Interpolation.linear x1, y1, x2, y2, x3
-      result.should eq(y3)
+      result = SPCore::Interpolation.linear 20, 40, 0.5
+      result.should eq(30)
     end
   end
+
+  context '.cubic_hermite' do
+    it 'should look like...' do
+      y0, y1, y2, y3 = 1.75, 1, 0.75, -1.5
+
+      x_ary = []
+      y_ary = []
+
+      (0.0..1.0).step(0.05) do |x|
+        y = SPCore::Interpolation.cubic_hermite y0, y1, y2, y3, x
+        x_ary << x
+        y_ary << y
+      end
+
+      #Gnuplot.open do |gp|
+      #  Gnuplot::Plot.new(gp) do |plot|
+      #    plot.title  "interpolated values"
+      #    plot.xlabel "x"
+      #    plot.ylabel "f(x)"
+      #  
+      #    plot.data = [            
+      #      Gnuplot::DataSet.new( [ x_ary, y_ary ] ) { |ds|
+      #        ds.with = "linespoints"
+      #        ds.title = "cubic hermite"
+      #        ds.linewidth = 1
+      #      }
+      #    ]
+      #  end
+      #end
+    end
+  end
+
 end

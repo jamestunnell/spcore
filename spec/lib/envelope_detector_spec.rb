@@ -26,7 +26,7 @@ describe SPCore::EnvelopeDetector do
         sample_count = (5.0 * sample_rate / freq).to_i
         sample_count.times do |n|
           percent = n.to_f / sample_count
-          amplitude = SPCore::Interpolation.linear 0.0, envelope_start, 1.0, envelope_end, percent
+          amplitude = SPCore::Interpolation.linear envelope_start, envelope_end, percent
           osc.amplitude = amplitude
           
           sample = osc.sample

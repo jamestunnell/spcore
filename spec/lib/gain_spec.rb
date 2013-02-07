@@ -19,7 +19,7 @@ describe SPCore::Gain do
 
     it 'should prove to be the inverse of .db_to_linear' do
       20.times do
-        x = SPCore::Interpolation.linear(0.0, -SPCore::Gain::MAX_DB_ABS, 1.0, SPCore::Gain::MAX_DB_ABS, rand)
+        x = SPCore::Interpolation.linear(-SPCore::Gain::MAX_DB_ABS, SPCore::Gain::MAX_DB_ABS, rand)
         y = SPCore::Gain::db_to_linear(x)
         z = SPCore::Gain::linear_to_db(y)
         ((z - x).abs / x).should be_within(1e-5).of(0.0)
@@ -38,7 +38,7 @@ describe SPCore::Gain do
       20.times do
         max_gain_linear = SPCore::Gain::db_to_linear(SPCore::Gain::MAX_DB_ABS)
         min_gain_linear = SPCore::Gain::db_to_linear(-SPCore::Gain::MAX_DB_ABS)
-        x = SPCore::Interpolation.linear(0.0, min_gain_linear, 1.0, max_gain_linear, rand)
+        x = SPCore::Interpolation.linear(min_gain_linear, max_gain_linear, rand)
         y = SPCore::Gain::linear_to_db(x)
         z = SPCore::Gain::db_to_linear(y)
         ((z - x).abs / x).should be_within(1e-5).of(0.0)
