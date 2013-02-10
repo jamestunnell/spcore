@@ -19,6 +19,15 @@ require 'spcore/windows/nuttall_window'
 require 'spcore/windows/rectangle_window'
 require 'spcore/windows/triangle_window'
 
+require 'spcore/filters/fir'
+require 'spcore/filters/sinc_filter'
+require 'spcore/filters/dual_sinc_filter'
+
+require 'spcore/transforms/dft'
+
+require 'spcore/util/scale'
+require 'spcore/util/signal_generator'
+
 require 'spcore/lib/interpolation'
 require 'spcore/lib/circular_buffer'
 require 'spcore/lib/delay_line'
