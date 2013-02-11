@@ -1,48 +1,52 @@
 module SPCore
 class DFT
-  def self.forward_dft input
-    raise ArgumentError, "input.size is not even" unless (input.size % 2 == 0)
-    size = input.size
-    f = Array.new(size / 2)  # freq bins
+  # @param [Array] input  array of real values, representing the time domain
+  #                       signal to be passed into the forward DFT.
+  def self.forward_dft input, skip_second_half = false
+    input_size = input.size
+    raise ArgumentError, "input.size is not even" unless (input_size % 2 == 0)
     
-    f.each_index do |k|
-      real_sum = 0.0
-      imag_sum = 0.0
-      size.times do |n|
-        a = TWO_PI * n * k / size
-        real_sum += input[n] * Math::cos(a)
-        imag_sum -= input[n] * Math::sin(a)
+    output_size = input_size
+    if skip_second_half
+      output_size /= 2
+    end
+    output = Array.new(output_size)
+    
+    #(output_size / 2).times do |k|
+    output.each_index do |k|
+      sum = Complex(0.0)
+      input.each_index do |n|
+        a = TWO_PI * n * k / input_size
+        b = Complex(input[n] * Math::cos(a), -input[n] * Math::sin(a))
+        sum += b
       end
-      f[k] = Math::sqrt(real_sum**2 + imag_sum**2)
-      #f[j] = Math::sqrt(first**2).abs + second**2
+      output[k] = sum
+      #output[output_size - 1 - k] = output[k] = sum
     end
     
-    return f
+    return output
   end
   
-  # copied from http://jvalentino2.tripod.com/dft/index.html
-  def self.forward_dft2 input
-    raise ArgumentError, "input.size is not even" unless (input.size % 2 == 0)
-    size = input.size
-    f = Array.new(size / 2)  # freq bins
+  # @param [Array] input  array of complex values, representing the frequency domain
+  #                       signal obtained from the forward DFT.
+  def self.inverse_dft input
+    input_size = input.size
+    raise ArgumentError, "input.size is not even" unless (input_size % 2 == 0)
     
-    for j in 0...(size/2)
-      first  = 0
-      second = 0
-      for k in 0...size
-        a = (TWO_PI / size) * (j * k)
-        first += input[k] * Math.cos(a)
-        second += input[k] * Math.sin(a)
+    output = Array.new(input_size)
+    output_size = output.size
+    
+    output.each_index do |k|
+      sum = 0.0
+      input.each_index do |n|
+        a = TWO_PI * n * k / input_size
+        sum += input[n].real * Math::cos(a)
+        sum += input[n].imag * Math::sin(a)
       end
-      
-      f[j] = Math::sqrt(first**2).abs + second**2
-      
-
-      # amplitude = 2 * f[j] / size;
-      # frequency = j * h / T * sample_rate;
+      output[k] = sum / output_size
     end
     
-    return f
+    return output    
   end
 end
 end

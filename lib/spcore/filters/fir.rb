@@ -28,8 +28,11 @@ class FIR
     input = [0.0] + @kernel # make the size even
 
     #binding.pry
-    output = DFT.forward_dft input
+    output = DFT.forward_dft input, true  # set skip_second_half to true to ignore second half of output (mirror image)
 
+    # calculate magnitudes from complex values
+    output = output.map {|x| x.magnitude }
+    
     if use_db
       output = output.map {|x| Gain::linear_to_db x }
     end

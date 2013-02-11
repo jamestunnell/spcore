@@ -13,6 +13,13 @@ class SignalGenerator
     hash_make ARG_SPECS, args
   end
   
+  def make_noise amplitude = 1.0
+    output = Array.new(@size)
+    output.each_index do |i|
+      output[i] = rand * amplitude
+    end
+  end
+  
   def make_signal freqs, extra_osc_args = {}
     args = { :sample_rate => @sample_rate }.merge! extra_osc_args
     oscs = []
