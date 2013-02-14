@@ -27,7 +27,7 @@ describe 'windows' do
     end
     
     if windows.any?
-      Plotter.new(:title => "windows").plot_sequences windows
+      Plotter.new(:title => "windows").plot_1d windows
     end
   end
 end

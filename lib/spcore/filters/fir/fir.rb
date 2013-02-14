@@ -59,25 +59,14 @@ class FIR
   end
   
   def plot_freq_response sample_rate, use_db = true
-    response = freq_response sample_rate, use_db
+    plotter = Plotter.new(
+      :title => "Freq magnitude response of #{@order}-order FIR filter",
+      :xlabel => "frequency (Hz)",
+      :ylabel => "magnitude#{use_db ? " (dB)" : ""}",
+      :logscale => "x"
+    )
     
-    Gnuplot.open do |gp|
-      Gnuplot::Plot.new(gp) do |plot|
-        plot.title  "Freq response of #{@order}-order FIR filter"
-        plot.xlabel "frequency (Hz)"
-        plot.ylabel "DFT magnitude response#{use_db ? " (dB)" : ""}"
-        plot.logscale 'x'
-      
-        plot.data = [            
-          Gnuplot::DataSet.new( [ response.keys, response.values ] ) { |ds|
-            ds.with = "lines"
-            ds.title = "magnitude response#{use_db ? " (dB)" : ""}"
-            ds.linewidth = 1
-          },
-        ]
-      end
-    end
-
+    plotter.plot_2d "" => freq_response(sample_rate, use_db)
   end
 end
 end

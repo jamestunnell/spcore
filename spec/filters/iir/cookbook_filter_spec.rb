@@ -3,42 +3,28 @@ require 'gnuplot'
 require 'pry'
 
 describe 'cookbook filter' do
-  #it 'should produce a nice frequency response graph' do
-  #  sample_rate = 44000.0
-  #  crit_freq = 1000.0
-  #  max_test_freq = 10000.0
-  #  bw = 2
-  #  filter = SPCore::CookbookNotchFilter.new sample_rate
-  #  filter.set_critical_freq_and_bw crit_freq, bw
-  #  
-  #  freqs = []
-  #  dbs = []
-  #  
-  #  start_freq = 10.0
-  #  test_freq = start_freq
-  #  
-  #  200.times do
-  #    mag = filter.get_freq_magnitude_response test_freq
-  #
-  #    dbs << SPCore::Gain.linear_to_db(mag)
-  #    freqs << test_freq
-  #    
-  #    test_freq *= 1.035
-  #  end
-  #
-  #  Gnuplot.open do |gp|
-  #    Gnuplot::Plot.new(gp) do |plot|
-  #      plot.title  "Frequency Magnitude Response for Lowpass Filter with Critical Freq of #{crit_freq} and BW of #{bw}"
-  #      plot.xlabel "Frequency (f)"
-  #      plot.ylabel "Frequency Magnitude Response (dB) at f"
-  #      plot.logscale 'x'
-  #    
-  #      plot.data << Gnuplot::DataSet.new( [freqs, dbs] ) do |ds|
-  #        ds.with = "linespoints"
-  #        #ds.linewidth = 4
-  #      end
-  #    end
-  #  end
-  #  
-  #end
+  it 'should produce a nice frequency response graph' do
+    #sample_rate = 4000.0
+    #crit_freq = 400.0
+    #min_test_freq = 10.0
+    #max_test_freq = (sample_rate / 2.0) - 1.0
+    #bw = 0.3
+    #
+    #[SPCore::CookbookLowpassFilter, SPCore::CookbookHighpassFilter, SPCore::CookbookBandpassFilter].each do |filter_class|
+    #  filter = filter_class.new sample_rate
+    #  filter.set_critical_freq_and_bw crit_freq, bw
+    #  
+    #  freq_response = {}
+    #  Scale.exponential(min_test_freq..max_test_freq, 200).each do |freq|
+    #    mag = filter.get_freq_magnitude_response freq
+    #    freq_response[freq] = SPCore::Gain.linear_to_db(mag)
+    #  end
+    #  
+    #  plotter = Plotter.new(
+    #    :title => "Frequency Magnitude Response for #{filter_class} with critical freq of #{crit_freq}",
+    #    :logscale => "x"
+    #  )
+    #  plotter.plot_2d "magnitude (dB)" => freq_response
+    #end
+  end
 end

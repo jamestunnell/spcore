@@ -18,7 +18,7 @@ describe SPCore::DiscreteResampling do
       signal2 = signal1.clone.upsample_discrete upsample_factor, order
       
       #plotter = Plotter.new(:title => "Discrete upsampling by #{upsample_factor}")
-      #plotter.plot_sequences("original signal" => signal1.data, "upsampled signal" => signal2.data)
+      #plotter.plot_1d("original signal" => signal1.data, "upsampled signal" => signal2.data)
 
       signal2.size.should eq(signal1.size * upsample_factor)
       

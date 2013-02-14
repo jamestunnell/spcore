@@ -15,7 +15,7 @@ describe SPCore::PolynomialResampling do
       signal2 = signal1.clone.upsample_polynomial upsample_factor
        
       #plotter = Plotter.new(:title => "Polynomial upsampling by #{upsample_factor}")
-      #plotter.plot_sequences("original signal" => signal1.data, "upsampled signal" => signal2.data)
+      #plotter.plot_1d("original signal" => signal1.data, "upsampled signal" => signal2.data)
       
       signal2.size.should eq(signal1.size * upsample_factor)
       
