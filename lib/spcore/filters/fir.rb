@@ -9,16 +9,27 @@ class FIR
   end
   
   def convolve input
-    raise ArgumentError, "input.size #{input.size} is not greater than filter kernel size #{@kernel.size}" unless input.size > @kernel.size
+    kernel_size = @kernel.size
+    raise ArgumentError, "input.size #{input.size} is not greater than filter kernel size #{kernel_size}" unless input.size > kernel_size
     
     output = Array.new(input.size, 0.0)
 
-    # first @lowpass_kernel.size entries are 0
-    for j in @kernel.size...input.size
+    for i in 0...kernel_size
+      sum = 0.0
       # convolve the input with the filter kernel
-      for i in 0...@kernel.size
-        output[j] += (input[j-i] * @kernel[i])
+      for j in 0...i
+        sum += (input[j] * @kernel[kernel_size - (1 + i - j)])
       end
+      output[i] = sum
+    end
+    
+    for i in kernel_size...input.size
+      sum = 0.0
+      # convolve the input with the filter kernel
+      for j in 0...kernel_size
+        sum += (input[i-j] * @kernel[j])
+      end
+      output[i] = sum
     end
     
     return output
@@ -26,8 +37,6 @@ class FIR
   
   def freq_response sample_rate, use_db = true
     input = [0.0] + @kernel # make the size even
-
-    #binding.pry
     output = DFT.forward_dft input, true  # set skip_second_half to true to ignore second half of output (mirror image)
 
     # calculate magnitudes from complex values

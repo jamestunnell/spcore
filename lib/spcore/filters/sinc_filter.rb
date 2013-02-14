@@ -46,40 +46,8 @@ class SincFilter
     lowpass_kernel[@order / 2] = 2 * transition_freq * window.data[@order / 2]
     highpass_kernel[@order / 2] = (1 - 2 * transition_freq) * window.data[@order / 2]
     
-    #highpass_kernel = lowpass_kernel.map {|x| -x}
-    #highpass_kernel[@order / 2] = (1 - (2 * transition_freq)) * window.data[@order / 2]
-    
     @lowpass_fir = FIR.new lowpass_kernel
     @highpass_fir = FIR.new highpass_kernel
-    
-    #binding.pry
-    #
-    #ns = []
-    #@lowpass_fir.kernel.each_index do |n|
-    #  ns << n
-    #end
-    #
-    #Gnuplot.open do |gp|
-    #  Gnuplot::Plot.new(gp) do |plot|
-    #    plot.title  "filter kernels"
-    #    plot.xlabel "n"
-    #    plot.ylabel "y(n)"
-    #    #plot.logscale 'x'
-    #  
-    #    plot.data = [            
-    #      Gnuplot::DataSet.new( [ ns, @lowpass_fir.kernel ] ) { |ds|
-    #        ds.with = "lines"
-    #        ds.title = "DFT magnitude response"
-    #        ds.linewidth = 1
-    #      },
-    #      Gnuplot::DataSet.new( [ ns, @highpass_fir.kernel ] ) { |ds|
-    #        ds.with = "lines"
-    #        ds.title = "DFT magnitude response"
-    #        ds.linewidth = 1
-    #      },
-    #    ]
-    #  end
-    #end
   end
   
   def lowpass input

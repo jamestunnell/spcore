@@ -25,6 +25,9 @@ require 'spcore/filters/dual_sinc_filter'
 
 require 'spcore/transforms/dft'
 
+require 'spcore/resampling/discrete_resampling'
+require 'spcore/resampling/polynomial_resampling'
+
 require 'spcore/util/scale'
 require 'spcore/util/signal_generator'
 
@@ -41,3 +44,4 @@ require 'spcore/lib/cookbook_lowpass_filter'
 require 'spcore/lib/cookbook_notch_filter'
 require 'spcore/lib/envelope_detector'
 require 'spcore/lib/saturation'
+require 'spcore/lib/resampling'
