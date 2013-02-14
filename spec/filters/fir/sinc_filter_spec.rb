@@ -1,5 +1,5 @@
 require 'pry'
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe SPCore::SincFilter do
   before :all do
