@@ -5,7 +5,7 @@ require 'gnuplot'
 describe SPCore::DFT do
   context '.forward_dft' do
     it 'should produce identical output when skip_second_half is set to true' do
-      input = SignalGenerator.new(:sample_rate => 400.0, :size => 128).make_noise
+      input = SignalGenerator.new(:sample_rate => 400.0, :size => 128).make_noise.data
       
       output1 = DFT.forward_dft input
       output1 = output1[0, output1.size / 2]

@@ -18,6 +18,8 @@ class SignalGenerator
     output.each_index do |i|
       output[i] = rand * amplitude
     end
+    
+    return Signal.new(:sample_rate => @sample_rate, :data => output)
   end
   
   def make_signal freqs, extra_osc_args = {}
@@ -34,7 +36,7 @@ class SignalGenerator
       end
     end
     
-    return output
+    return Signal.new(:sample_rate => @sample_rate, :data => output)
   end
 end
 end

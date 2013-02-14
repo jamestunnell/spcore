@@ -15,15 +15,15 @@ describe SPCore::SignalGenerator do
         generator = SignalGenerator.new :sample_rate => @sample_rate, :size => size
         
         @test_freqs.each do |freq|
-          output1 = generator.make_signal [freq]
+          signal = generator.make_signal [freq]
           
           osc = Oscillator.new(:sample_rate => @sample_rate, :frequency => freq)
-          output2 = Array.new(size)
+          osc_output = Array.new(size)
           size.times do |i|
-            output2[i] = osc.sample
+            osc_output[i] = osc.sample
           end
           
-          output1.should eq(output2)
+          signal.data.should eq(osc_output)
         end
       end
     end
@@ -38,16 +38,16 @@ describe SPCore::SignalGenerator do
           oscs.push Oscillator.new(:sample_rate => @sample_rate, :frequency => freq)
         end
         
-        output1 = generator.make_signal @test_freqs
+        signal = generator.make_signal @test_freqs
 
-        output2 = Array.new(size, 0.0)
+        osc_output = Array.new(size, 0.0)
         size.times do |i|
           oscs.each do |osc|
-            output2[i] += osc.sample
+            osc_output[i] += osc.sample
           end
         end
           
-        output1.should eq(output2)
+        signal.data.should eq(osc_output)
       end
     end
   end

@@ -11,56 +11,19 @@ describe SPCore::PolynomialResampling do
       upsample_factor = 2.5
       
       generator = SignalGenerator.new :sample_rate => sample_rate, :size => size
-      signal = generator.make_signal [test_freq]
-      input = signal
+      signal1 = generator.make_signal [test_freq]
+      signal2 = signal1.clone.upsample_polynomial upsample_factor
+       
+      #plotter = Plotter.new(:title => "Polynomial upsampling by #{upsample_factor}")
+      #plotter.plot_sequences("original signal" => signal1.data, "upsampled signal" => signal2.data)
       
-      output = Resampling.upsample_polynomial input, sample_rate, upsample_factor
-      output.size.should eq(size * upsample_factor)
+      signal2.size.should eq(signal1.size * upsample_factor)
       
-      dft1 = DFT.forward_dft input, true
-      dft1 = dft1.map{ |x| x.magnitude }
-      dft1_max_i = dft1.index(dft1.max)
-      dft1_max_freq = (sample_rate * dft1_max_i) / (dft1.size * 2)
+      max_freq1 = signal1.freq_magnitudes.max_by{|freq, mag| mag }[0]
+      max_freq2 = signal2.freq_magnitudes.max_by{|freq, mag| mag }[0]
       
-      dft2 = DFT.forward_dft output, true
-      dft2 = dft2.map{ |x| x.magnitude }
-      dft2_max_i = dft2.index(dft2.max)
-      dft2_max_freq = (sample_rate * upsample_factor * dft2_max_i) / (dft2.size * 2)
-      
-      percent_error = (dft1_max_freq - dft2_max_freq).abs / dft1_max_freq
+      percent_error = (max_freq1 - max_freq2).abs / max_freq1
       percent_error.should be_within(0.1).of(0.0)
-      
-      #input_indices = []
-      #input.each_index do |i|
-      #  input_indices[i] = i
-      #end
-      #
-      #output_indices = []
-      #output.each_index do |i|
-      #  output_indices[i] = i
-      #end
-      #
-      #Gnuplot.open do |gp|
-      #  Gnuplot::Plot.new(gp) do |plot|
-      #    plot.title  "Upsampling by #{upsample_factor}"
-      #    plot.xlabel "sample numbers"
-      #    plot.ylabel "samples"
-      #    
-      #    plot.data = [
-      #      Gnuplot::DataSet.new( [ input_indices, input ] ) { |ds|
-      #        ds.with = "lines"
-      #        ds.title = "original input"
-      #        ds.linewidth = 1
-      #      },
-      #      Gnuplot::DataSet.new( [ output_indices, output ] ) { |ds|
-      #        ds.with = "lines"
-      #        ds.title = "resampled input"
-      #        ds.linewidth = 1
-      #      }
-      #    ]
-      #  end
-      #end
-      
     end
   end
   

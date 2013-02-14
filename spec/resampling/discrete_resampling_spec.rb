@@ -2,6 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'gnuplot'
 
 describe SPCore::DiscreteResampling do
+
   context '.upsample' do
     it 'should produce output signal with the same max frequency (put through forward DFT)' do
       sample_rate = 400.0
@@ -10,58 +11,22 @@ describe SPCore::DiscreteResampling do
       upsample_factor = 5
       order = (sample_rate / test_freq).to_i
       
-      generator = SignalGenerator.new :sample_rate => sample_rate, :size => (size - order * 2)
-      signal = generator.make_signal [test_freq]
-      input = Array.new(order, 0.0) + signal + Array.new(order, 0.0)
+      generator = SignalGenerator.new :sample_rate => sample_rate, :size => size
+      signal1 = generator.make_signal [test_freq]
+      signal1.prepend Array.new(order, 0.0)
+      signal1.append Array.new(order, 0.0)
+      signal2 = signal1.clone.upsample_discrete upsample_factor, order
       
-      output = DiscreteResampling.upsample input, sample_rate, upsample_factor, order
+      #plotter = Plotter.new(:title => "Discrete upsampling by #{upsample_factor}")
+      #plotter.plot_sequences("original signal" => signal1.data, "upsampled signal" => signal2.data)
+
+      signal2.size.should eq(signal1.size * upsample_factor)
       
-      output.size.should eq(size * upsample_factor)
+      max_freq1 = signal1.freq_magnitudes.max_by{|freq, mag| mag }[0]
+      max_freq2 = signal2.freq_magnitudes.max_by{|freq, mag| mag }[0]
       
-      dft1 = DFT.forward_dft input, true
-      dft1 = dft1.map{ |x| x.magnitude }
-      dft1_max_i = dft1.index(dft1.max)
-      dft1_max_freq = (sample_rate * dft1_max_i) / (dft1.size * 2)
-      
-      dft2 = DFT.forward_dft output, true
-      dft2 = dft2.map{ |x| x.magnitude }
-      dft2_max_i = dft2.index(dft2.max)
-      dft2_max_freq = (sample_rate * upsample_factor * dft2_max_i) / (dft2.size * 2)
-      
-      percent_error = (dft1_max_freq - dft2_max_freq).abs / dft1_max_freq
+      percent_error = (max_freq1 - max_freq2).abs / max_freq1
       percent_error.should be_within(0.1).of(0.0)
-      
-      #input_indices = []
-      #input.each_index do |i|
-      #  input_indices[i] = i
-      #end
-      #
-      #output_indices = []
-      #output.each_index do |i|
-      #  output_indices[i] = i
-      #end
-      #
-      #Gnuplot.open do |gp|
-      #  Gnuplot::Plot.new(gp) do |plot|
-      #    plot.title  "Upsampling by #{upsample_factor}"
-      #    plot.xlabel "sample numbers"
-      #    plot.ylabel "samples"
-      #    
-      #    plot.data = [
-      #      Gnuplot::DataSet.new( [ input_indices, input ] ) { |ds|
-      #        ds.with = "lines"
-      #        ds.title = "original input"
-      #        ds.linewidth = 1
-      #      },
-      #      Gnuplot::DataSet.new( [ output_indices, output ] ) { |ds|
-      #        ds.with = "lines"
-      #        ds.title = "resampled input"
-      #        ds.linewidth = 1
-      #      }
-      #    ]
-      #  end
-      #end
-      
     end
   end
   

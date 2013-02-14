@@ -1,7 +1,6 @@
 require 'hashmake'
 require 'spcore/version'
 
-require 'spcore/core/limiters'
 require 'spcore/core/constants'
 
 require 'spcore/windows/bartlett_hann_window'
@@ -28,8 +27,11 @@ require 'spcore/transforms/dft'
 require 'spcore/resampling/discrete_resampling'
 require 'spcore/resampling/polynomial_resampling'
 
+require 'spcore/util/limiters'
 require 'spcore/util/scale'
+require 'spcore/util/signal'
 require 'spcore/util/signal_generator'
+require 'spcore/util/plotter'
 
 require 'spcore/lib/interpolation'
 require 'spcore/lib/circular_buffer'
@@ -44,4 +46,3 @@ require 'spcore/lib/cookbook_lowpass_filter'
 require 'spcore/lib/cookbook_notch_filter'
 require 'spcore/lib/envelope_detector'
 require 'spcore/lib/saturation'
-require 'spcore/lib/resampling'
