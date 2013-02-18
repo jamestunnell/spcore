@@ -2,7 +2,7 @@ module SPCore
 class DFT
   # @param [Array] input  array of real values, representing the time domain
   #                       signal to be passed into the forward DFT.
-  def self.forward_dft input, skip_second_half = false
+  def self.forward input, skip_second_half = false
     input_size = input.size
     raise ArgumentError, "input.size is not even" unless (input_size % 2 == 0)
     
@@ -29,7 +29,7 @@ class DFT
   
   # @param [Array] input  array of complex values, representing the frequency domain
   #                       signal obtained from the forward DFT.
-  def self.inverse_dft input
+  def self.inverse input
     input_size = input.size
     raise ArgumentError, "input.size is not even" unless (input_size % 2 == 0)
     

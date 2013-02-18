@@ -3,14 +3,14 @@ require 'pry'
 require 'gnuplot'
 
 describe SPCore::DFT do
-  context '.forward_dft' do
+  context '.forward' do
     it 'should produce identical output when skip_second_half is set to true' do
       input = SignalGenerator.new(:sample_rate => 400.0, :size => 128).make_noise.data
       
-      output1 = DFT.forward_dft input
+      output1 = DFT.forward input
       output1 = output1[0, output1.size / 2]
       
-      output2 = DFT.forward_dft input, true
+      output2 = DFT.forward input, true
       
       output1.should eq(output2)
     end
@@ -41,7 +41,7 @@ describe SPCore::DFT do
           input[i] = osc.sample * window.data[i]
         end
         
-        output = DFT.forward_dft input, true  # skip_second_half is set to true
+        output = DFT.forward input, true  # skip_second_half is set to true
         output = output.map { |x| x.magnitude } # map complex values to magnitude
   
         frequencies = Array.new(output.size)
@@ -80,7 +80,7 @@ describe SPCore::DFT do
     end
   end
   
-  context '.inverse_dft' do
+  context '.inverse' do
   
     it 'should produce a near-identical signal to the original sent into the forward DFT (with energy that is within 10 percent error of original signal)' do
       min_dft_size = 512
@@ -106,8 +106,8 @@ describe SPCore::DFT do
           input[i] = osc.sample * window.data[i]
         end
         
-        output = DFT.forward_dft input
-        input2 = DFT.inverse_dft output
+        output = DFT.forward input
+        input2 = DFT.inverse output
         
         energy1 = input.inject(0.0){|sum,x| sum + (x * x)}
         energy2 = input2.inject(0.0){|sum,x| sum + (x * x)}

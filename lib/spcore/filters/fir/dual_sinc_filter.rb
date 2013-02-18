@@ -64,8 +64,8 @@ class DualSincFilter
     bandpass_kernel[@order / 2] = bw_times_two * window_center_val
     bandstop_kernel[@order / 2] = (1.0 - bw_times_two) * window_center_val
     
-    @bandpass_fir = FIR.new bandpass_kernel
-    @bandstop_fir = FIR.new bandstop_kernel
+    @bandpass_fir = FIR.new bandpass_kernel, @sample_rate
+    @bandstop_fir = FIR.new bandstop_kernel, @sample_rate
   end
   
   def bandpass input

@@ -46,8 +46,8 @@ class SincFilter
     lowpass_kernel[@order / 2] = 2 * transition_freq * window.data[@order / 2]
     highpass_kernel[@order / 2] = (1 - 2 * transition_freq) * window.data[@order / 2]
     
-    @lowpass_fir = FIR.new lowpass_kernel
-    @highpass_fir = FIR.new highpass_kernel
+    @lowpass_fir = FIR.new lowpass_kernel, @sample_rate
+    @highpass_fir = FIR.new highpass_kernel, @sample_rate
   end
   
   def lowpass input

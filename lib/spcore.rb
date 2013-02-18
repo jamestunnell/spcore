@@ -36,6 +36,7 @@ require 'spcore/filters/iir/cookbook_notch_filter'
 require 'spcore/interpolation/interpolation'
 
 require 'spcore/transforms/dft'
+require 'spcore/transforms/fft'
 
 require 'spcore/resampling/discrete_resampling'
 require 'spcore/resampling/polynomial_resampling'

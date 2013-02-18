@@ -1,11 +1,12 @@
 module SPCore
 class FIR
   
-  attr_reader :kernel, :order
+  attr_reader :kernel, :order, :sample_rate
   
-  def initialize kernel
+  def initialize kernel, sample_rate
     @kernel = kernel
     @order = kernel.size - 1
+    @sample_rate = sample_rate
   end
   
   def convolve input
@@ -35,12 +36,13 @@ class FIR
     return output
   end
   
-  def freq_response sample_rate, use_db = true
-    input = [0.0] + @kernel # make the size even
-    output = DFT.forward_dft input, true  # set skip_second_half to true to ignore second half of output (mirror image)
+  def freq_response use_db = false
 
-    # calculate magnitudes from complex values
-    output = output.map {|x| x.magnitude }
+    input = [0.0] + @kernel # make the size even
+    output = FFT.forward input
+    
+    output = output[0...(output.size / 2)]  # ignore second half (mirror image)
+    output = output.map {|x| x.magnitude }  # calculate magnitudes from complex values
     
     if use_db
       output = output.map {|x| Gain::linear_to_db x }
@@ -48,7 +50,7 @@ class FIR
     
     response = {}
     output.each_index do |n|
-      frequency = (sample_rate * n) / (output.size * 2)
+      frequency = (@sample_rate * n) / (output.size * 2)
       response[frequency] = output[n]
     end
     
@@ -58,7 +60,7 @@ class FIR
     return response
   end
   
-  def plot_freq_response sample_rate, use_db = true
+  def plot_freq_response use_db = true
     plotter = Plotter.new(
       :title => "Freq magnitude response of #{@order}-order FIR filter",
       :xlabel => "frequency (Hz)",
@@ -66,7 +68,7 @@ class FIR
       :logscale => "x"
     )
     
-    plotter.plot_2d "" => freq_response(sample_rate, use_db)
+    plotter.plot_2d "" => freq_response(use_db)
   end
 end
 end

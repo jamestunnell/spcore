@@ -7,14 +7,13 @@ describe SPCore::DiscreteResampling do
     it 'should produce output signal with the same max frequency (put through forward DFT)' do
       sample_rate = 400.0
       test_freq = 10.0
-      size = (sample_rate * 5.0 / test_freq).to_i
+      size = 200
       upsample_factor = 5
       order = (sample_rate / test_freq).to_i
       
       generator = SignalGenerator.new :sample_rate => sample_rate, :size => size
       signal1 = generator.make_signal [test_freq]
-      signal1.prepend Array.new(order, 0.0)
-      signal1.append Array.new(order, 0.0)
+      signal1 *= BlackmanWindow.new(size).data
       signal2 = signal1.clone.upsample_discrete upsample_factor, order
       
       #plotter = Plotter.new(:title => "Discrete upsampling by #{upsample_factor}")

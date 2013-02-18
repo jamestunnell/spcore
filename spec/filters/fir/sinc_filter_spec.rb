@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 describe SPCore::SincFilter do
   before :all do
     @sample_rate = 4000.0
-    @orders = Scale.linear 100..200, 4
+    @orders = [62,126,254]
     @cutoffs = Scale.exponential 400.0..1600.0, 4
   end
   
@@ -16,8 +16,8 @@ describe SPCore::SincFilter do
             order += 1
           end
           filter = SincFilter.new :order => order, :cutoff_freq => cutoff, :sample_rate => @sample_rate, :window_class => BlackmanWindow
-          #filter.highpass_fir.plot_freq_response @sample_rate, false
-          freq_response = filter.highpass_fir.freq_response @sample_rate
+          #filter.highpass_fir.plot_freq_response false
+          freq_response = filter.highpass_fir.freq_response true
           
           freq_response.each do |freq, magnitude|
             if freq <= (0.8 * cutoff)
@@ -39,8 +39,8 @@ describe SPCore::SincFilter do
             order += 1
           end
           filter = SincFilter.new :order => order, :cutoff_freq => cutoff, :sample_rate => @sample_rate, :window_class => BlackmanWindow
-          #filter.lowpass_fir.plot_freq_response @sample_rate, false
-          freq_response = filter.lowpass_fir.freq_response @sample_rate
+          #filter.lowpass_fir.plot_freq_response false
+          freq_response = filter.lowpass_fir.freq_response true
           
           freq_response.each do |freq, magnitude|
             if freq <= (0.8 * cutoff)

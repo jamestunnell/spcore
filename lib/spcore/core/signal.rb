@@ -43,24 +43,20 @@ class Signal
   end
 
   def freq_magnitudes convert_to_db = false
-    skip_second_half = true
-    dft_output = DFT.forward_dft @data, skip_second_half
+    fft_output = FFT.forward @data
     
-    # map complex value to magnitude
-    dft_output = dft_output.map {|x| x.magnitude }
+    fft_output = fft_output[0...(fft_output.size / 2)]  # ignore second half
+    fft_output = fft_output.map {|x| x.magnitude }  # map complex value to magnitude
     
     if convert_to_db
-      dft_output = dft_output.map {|x| Gain.linear_to_db x}
+      fft_output = fft_output.map {|x| Gain.linear_to_db x}
     end
     
     freq_magnitudes = {}
-    dft_output.each_index do |i|
-      size = dft_output.size
-      if skip_second_half
-        size *= 2
-      end
+    fft_output.each_index do |i|
+      size = fft_output.size * 2 # mul by 2 because the second half of original fft_output was removed
       freq = (@sample_rate * i) / size
-      freq_magnitudes[freq] = dft_output[i]
+      freq_magnitudes[freq] = fft_output[i]
     end
     
     return freq_magnitudes
