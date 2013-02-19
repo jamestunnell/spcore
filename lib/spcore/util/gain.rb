@@ -1,4 +1,5 @@
 module SPCore
+# Provide utility functions to convert between a linear and decibel (logarithm) unit.
 class Gain
   
   #MAX_DB = 72
@@ -167,12 +168,14 @@ class Gain
 
   MAX_DB_ABS = 6000.0
 
+  # Convert a decibel value to a linear value.
   def self.db_to_linear db
     db_abs = db.abs
     raise ArgumentError, "|db| is #{db_abs}, which is greater than the allowed #{MAX_DB_ABS}" if db_abs > MAX_DB_ABS
     return 10.0**(db / 20.0)
   end
   
+  # Convert a linear value to a decibel value.
   def self.linear_to_db linear
     raise ArgumentError, "linear value #{linear} is less than or equal to 0.0" if linear <= 0.0
     return 20.0 * Math::log10(linear)

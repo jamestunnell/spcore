@@ -1,4 +1,6 @@
 module SPCore
+# Produces a Blackman-Nuttall window of a given size (number of samples).
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Blackman.E2.80.93Nuttall_window.
 class BlackmanNuttallWindow
   attr_reader :data
   def initialize size

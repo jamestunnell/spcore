@@ -4,17 +4,6 @@ require 'gnuplot'
 
 describe SPCore::FFT do
   context '.forward' do
-    #it 'should produce identical output when skip_second_half is set to true' do
-    #  input = SignalGenerator.new(:sample_rate => 400.0, :size => 128).make_noise.data
-    #  
-    #  output1 = DFT.forward_dft input
-    #  output1 = output1[0, output1.size / 2]
-    #  
-    #  output2 = DFT.forward_dft input, true
-    #  
-    #  output1.should eq(output2)
-    #end
-  
     it 'should produce a freq magnitude response peak that is within 10 percent of the test freq' do
       fft_size = 512
       sample_rate = 400.0
@@ -42,38 +31,54 @@ describe SPCore::FFT do
         output = output[0...(output.size / 2)]
         output = output.map { |x| x.magnitude } # map complex values to magnitude
   
-        frequencies = Array.new(output.size)
+        magn_response = {}
         output.each_index do |n|
-          frequencies[n] = (sample_rate * n) / (output.size * 2)
+          f = (sample_rate * n) / (output.size * 2)
+          magn_response[f] = output[n]
         end
         
-        max_freq = frequencies.first
-        max_magn = output.first
-        (input_size / 2).times do |n|
-          if output[n] > max_magn
-            max_magn = output[n]
-            max_freq = frequencies[n]
-          end
-        end
+        max_freq = magn_response.max_by {|f,magn| magn }[0]
         percent_err = (max_freq - freq).abs / freq
         percent_err.should be_within(0.10).of(0.0)
+        
+        #Plotter.new(
+        #  :title => "#{input_size}-point FFT on #{freq} Hz sine wave signal",
+        #  :xlabel => "frequency (Hz)",
+        #  :ylabel => "magnitude response",
+        #).plot_2d("magnitude response" => magn_response)
+      end
+    end
+  end
+
+  context '.inverse' do
+
+    it 'should produce a near-identical signal to the original sent into the forward DFT (with energy that is within 10 percent error of original signal)' do
+      fft_size = 128
+      sample_rate = 400.0
+      
+      test_freqs = [
+        20.0,
+        40.0,
+      ]
+      
+      test_freqs.each do |freq|
+        input = SignalGenerator.new(:sample_rate => sample_rate, :size => fft_size).make_signal([freq])
+        input *= BlackmanHarrisWindow.new(fft_size).data
+        
+        output = FFT.forward input.data
+        input2 = FFT.inverse output
+        
+        energy1 = input.energy
+        energy2 = input2.inject(0.0){|sum,x| sum + (x * x)}
   
-        #Gnuplot.open do |gp|
-        #  Gnuplot::Plot.new(gp) do |plot|
-        #    plot.title  "#{input_size}-point FFT on #{freq} Hz sine wave signal"
-        #    plot.xlabel "frequency (Hz)"
-        #    plot.ylabel "magnitude response"
-        #    #plot.logscale 'x'
-        #  
-        #    plot.data = [            
-        #      Gnuplot::DataSet.new( [ frequencies, output ] ) { |ds|
-        #        ds.with = "lines"
-        #        ds.title = "magnitude response"
-        #        ds.linewidth = 1
-        #      },
-        #    ]
-        #  end
-        #end
+        percent_err = (energy2 - energy1).abs / energy1
+        percent_err.should be_within(0.10).of(0.0)
+
+        #Plotter.new(
+        #  :title => "#{fft_size}-point FFT on #{freq} Hz sine wave signal",
+        #  :xlabel => "frequency (Hz)",
+        #  :ylabel => "magnitude response",
+        #).plot_1d("input1" => input.data, "input2" => input2)
       end
     end
   end

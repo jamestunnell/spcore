@@ -1,4 +1,6 @@
 module SPCore
+# Produces a Blackman-Harris window of a given size (number of samples).
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Blackman.E2.80.93Harris_window.
 class BlackmanHarrisWindow
   attr_reader :data
   def initialize size

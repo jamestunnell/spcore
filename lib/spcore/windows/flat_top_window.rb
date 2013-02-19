@@ -1,4 +1,11 @@
 module SPCore
+# Produces a flat top window of a given size (number of samples).
+# A flat top window is a partially negative-valued window that has a flat top in
+# the frequency domain. They are designed to have a broader bandwidth and so have
+# a poorer frequency resolution, leading to low amplitude measurement error suitable
+# for use in in spectrum analyzers for the measurement of amplitudes of sinusoidal
+# frequency components
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Flat_top_window.
 class FlatTopWindow
   attr_reader :data
   def initialize size

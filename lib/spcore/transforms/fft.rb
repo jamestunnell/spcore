@@ -1,7 +1,12 @@
 module SPCore
+# Perform FFT transforms, forward and inverse.
+# @author James Tunnell
 class FFT
 
-  # forward FFT transform  
+  # Forward FFT transform. Operates on an array of real values, representing a time domain signal.
+  # @param [Array] input An array of numeric values. If size is not an exact power-of-two, then zeros will be appended until it is, unless force_power_of_two_size is set false.
+  # @param [Array] force_power_of_two_size If true, any input that does not have an exact power-of-two size will be appended with zeros until it does. Set true by default.
+  # @raise [ArgumentError] if input size is not an exact power-of-two and force_power_of_two_size is false.
   def self.forward input, force_power_of_two_size = true
     size = input.size
     power_of_two = Math::log2(size)
@@ -20,7 +25,7 @@ class FFT
     x = bit_reverse_order input, power_of_two
     
     phase = Array.new(size/2){|n|
-      Complex(Math::cos(2*Math::PI*n/size), -Math::sin(2*Math::PI*n/size))
+      Complex(Math::cos(TWO_PI*n/size), -Math::sin(TWO_PI*n/size))
     }
     for a in 1..power_of_two
       l = 2**a
@@ -48,6 +53,49 @@ class FFT
       end
     end
     return x
+  end
+
+  # Inverse FFT transform. Operates on an array of complex values, as one would obtain
+  # from the forward FFT transform.
+  # @param [Array] input An array of complex values. Must have an exact power-of-two size (2, 4, 8, 16, 32, ...).
+  # @raise [ArgumentError] if input size is not an exact power-of-two.
+  def self.inverse input
+    size = input.size
+    power_of_two = Math::log2(size)
+    raise ArgumentError, "input.size #{size} is not power of 2" if power_of_two.floor != power_of_two
+    power_of_two = power_of_two.to_i
+    x = bit_reverse_order input, power_of_two
+    
+    phase = Array.new(size/2){|n|
+      Complex(Math::cos(TWO_PI*n/size), -Math::sin(TWO_PI*n/size))
+    }
+    for a in 1..power_of_two
+      l = 2**a
+      phase_level = []
+
+      0.step(size/2, size/l) do |i|
+        phase_level << phase[i]
+      end
+      
+      ks = []
+      0.step(size-l, l) do |k|
+        ks << k
+      end
+
+      ks.each do |k|
+        for n in 0...l/2
+          idx1 = n+k
+          idx2 = n+k + (l/2)
+          
+          first  = x[idx1]
+          second = x[idx2] * phase_level[n]
+          x[idx1] = (first + second)
+          x[idx2] = (first - second)
+        end
+      end
+    end
+    
+    return x.map {|val| val / size }
   end
 
   private

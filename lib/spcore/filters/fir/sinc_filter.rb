@@ -10,7 +10,8 @@ module SPCore
 #
 class SincFilter
   include Hashmake::HashMakeable
-  
+
+  # Use to process hashed args in #initialize.  
   ARG_SPECS = [
     Hashmake::ArgSpec.new(:key => :order, :reqd => true, :type => Fixnum, :validator => ->(a){ a % 2 == 0 } ),
     Hashmake::ArgSpec.new(:key => :sample_rate, :reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
@@ -50,10 +51,14 @@ class SincFilter
     @highpass_fir = FIR.new highpass_kernel, @sample_rate
   end
   
+  # Process the input with the lowpass FIR.
+  # @return [Array] containing the filtered input.
   def lowpass input
     return @lowpass_fir.convolve input
   end
   
+  # Process the input with the highpass FIR.
+  # @return [Array] containing the filtered input.
   def highpass input
     return @highpass_fir.convolve input
   end

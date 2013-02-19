@@ -1,7 +1,9 @@
 module SPCore
+# Provides methods for generating a Signal that contains test waveforms or noise.
 class SignalGenerator
   include Hashmake::HashMakeable
   
+  # used to process hashed args in #initialize.
   ARG_SPECS = [
     Hashmake::ArgSpec.new(:key => :size, :reqd => true, :type => Fixnum, :validator => ->(a){ a > 0 }),
     Hashmake::ArgSpec.new(:key => :sample_rate, :reqd => true, :type => Float, :validator => ->(a){ a > 0.0 })
@@ -9,10 +11,13 @@ class SignalGenerator
   
   attr_reader :sample_rate, :size
   
+  # A new instance of SignalGenerator.
+  # @param [Hash] args Required keys are :sample_rate and :size.
   def initialize args
     hash_make ARG_SPECS, args
   end
   
+  # Generate a Signal object with noise data.
   def make_noise amplitude = 1.0
     output = Array.new(@size)
     output.each_index do |i|
@@ -22,6 +27,7 @@ class SignalGenerator
     return Signal.new(:sample_rate => @sample_rate, :data => output)
   end
   
+  # Generate a Signal object with waveform data at the given frequencies.
   def make_signal freqs, extra_osc_args = {}
     args = { :sample_rate => @sample_rate }.merge! extra_osc_args
     oscs = []

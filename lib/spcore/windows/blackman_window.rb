@@ -1,4 +1,6 @@
 module SPCore
+# Produces a Blackman window of a given size (number of samples).
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Blackman_windows.
 class BlackmanWindow
   attr_reader :data
   def initialize size

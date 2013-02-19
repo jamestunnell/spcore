@@ -83,7 +83,7 @@ describe SPCore::DFT do
   context '.inverse' do
   
     it 'should produce a near-identical signal to the original sent into the forward DFT (with energy that is within 10 percent error of original signal)' do
-      min_dft_size = 512
+      dft_size = 64
       sample_rate = 400.0
       
       test_freqs = [
@@ -92,55 +92,23 @@ describe SPCore::DFT do
       ]
       
       test_freqs.each do |freq|
-        osc = Oscillator.new(:frequency => freq, :sample_rate => sample_rate)
-  
-        input_size = (5 * sample_rate / test_freqs.min).to_i
-        if input_size < min_dft_size
-          input_size = min_dft_size
-        end
-  
-        input = Array.new(input_size)
-        window = BlackmanWindow.new(input_size)
+        input = SignalGenerator.new(:sample_rate => sample_rate, :size => dft_size).make_signal([freq])
+        input *= BlackmanHarrisWindow.new(dft_size).data
         
-        input_size.times do |i|
-          input[i] = osc.sample * window.data[i]
-        end
-        
-        output = DFT.forward input
+        output = DFT.forward input.data
         input2 = DFT.inverse output
         
-        energy1 = input.inject(0.0){|sum,x| sum + (x * x)}
+        energy1 = input.energy
         energy2 = input2.inject(0.0){|sum,x| sum + (x * x)}
   
         percent_err = (energy2 - energy1).abs / energy1
         percent_err.should be_within(0.10).of(0.0)
         
-        #sample_numbers = Array.new(input.size)
-        #input.each_index do |i|
-        #  sample_numbers[i] = i
-        #end
-        
-        #Gnuplot.open do |gp|
-        #  Gnuplot::Plot.new(gp) do |plot|
-        #    plot.title  "Original signal vs. forward-inverse-DFT of signal"
-        #    plot.xlabel "sample #"
-        #    plot.ylabel "signal value"
-        #    #plot.logscale 'x'
-        #  
-        #    plot.data = [            
-        #      Gnuplot::DataSet.new( [ sample_numbers, input ] ) { |ds|
-        #        ds.with = "lines"
-        #        ds.title = "original signal values"
-        #        ds.linewidth = 1
-        #      },
-        #      Gnuplot::DataSet.new( [ sample_numbers, input2 ] ) { |ds|
-        #        ds.with = "lines"
-        #        ds.title = "transformed signal values"
-        #        ds.linewidth = 1
-        #      },
-        #    ]
-        #  end
-        #end
+        #Plotter.new(
+        #  :title => "#{dft_size}-point DFT on #{freq} Hz sine wave signal",
+        #  :xlabel => "frequency (Hz)",
+        #  :ylabel => "magnitude response",
+        #).plot_1d("input1" => input.data, "input2" => input2)
       end
     end
   end

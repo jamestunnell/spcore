@@ -1,4 +1,5 @@
 module SPCore
+# Provide simple saturation methods, that limit input above the given threshold value.
 class Saturation
   # Sigmoid-based saturation when input is above threshold.
   # From musicdsp.org, posted by Bram.
@@ -18,6 +19,7 @@ class Saturation
     end
   end
   
+  # A Gompertz-sigmoid-based saturation when input is above threshold.
   def self.gompertz input, threshold
     a = threshold
     b = -4
@@ -32,14 +34,5 @@ class Saturation
     end
   end
   
-  private
-  
-  #def self.mock_sigmoid x
-  #  if(x.abs < 1.0)
-  #    return x * (1.5 - 0.5 * x * x)
-  #  else
-  #    return x > 0.0 ? 1.0 : -1.0
-  #  end
-  #end
 end
 end

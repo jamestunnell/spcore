@@ -1,4 +1,6 @@
 module SPCore
+# Produces a Cosine window of a given size (number of samples).
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Cosine_window.
 class CosineWindow
   attr_reader :data
   def initialize size

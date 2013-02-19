@@ -10,6 +10,7 @@ module SPCore
 class DualSincFilter
   include Hashmake::HashMakeable
   
+  # Use to process hashed args in #initialize.
   ARG_SPECS = [
     Hashmake::ArgSpec.new(:key => :order, :reqd => true, :type => Fixnum, :validator => ->(a){ a % 2 == 0 } ),
     Hashmake::ArgSpec.new(:key => :sample_rate, :reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
@@ -67,11 +68,15 @@ class DualSincFilter
     @bandpass_fir = FIR.new bandpass_kernel, @sample_rate
     @bandstop_fir = FIR.new bandstop_kernel, @sample_rate
   end
-  
+
+  # Process the input with the bandpass FIR.
+  # @return [Array] containing the filtered input.  
   def bandpass input
     return @bandpass_fir.convolve input
   end
   
+  # Process the input with the bandstop FIR.
+  # @return [Array] containing the filtered input.
   def bandstop input
     return @bandstop_fir.convolve input
   end

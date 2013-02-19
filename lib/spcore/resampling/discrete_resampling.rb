@@ -1,4 +1,6 @@
 module SPCore
+# Provide resampling methods (upsampling and downsampling) using
+# discrete filtering.
 class DiscreteResampling
   
   def self.upsample input, sample_rate, upsample_factor, filter_order

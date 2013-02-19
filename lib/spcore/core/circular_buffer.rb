@@ -1,9 +1,26 @@
 module SPCore
+# A circular (ring) buffer. The same array is used to store data over the life
+# of the buffer, unless the size is changed. As data is pushed and popped indices
+# are updated to track the oldest and newest elements.
+#
+# Push behavior can be modified by setting override_when_full. If true, when the
+# fill count reaches buffer size then new data will override the oldest data. If
+# false, when fill count is maxed the new data will raise an exception.
+#
+# Pop behavior can be modified by setting fifo to true or false. If true, pop will
+# return the oldest data (data first pushed). If false, pop will return the newest
+# data (data last pushed). 
+#
+# @author James Tunnell
 class CircularBuffer
   
   attr_accessor :fifo, :override_when_full
   attr_reader :fill_count
-  
+
+  # A new instance of CircularBuffer.
+  # @param [Fixnum] size The buffer size (and maximum fill count).
+  # @param [Hash] opts Contain optional arguments to modify buffer push/pop behavior.
+  #                    Valid keys are :override_when_full and :fifo.
   def initialize size, opts = {}
     
     opts = { :fifo => true, :override_when_full => true }.merge opts
@@ -17,18 +34,22 @@ class CircularBuffer
     @override_when_full = opts[:override_when_full]
   end
   
+  # Return the buffer size (max fill count).
   def size
     return @buffer.count
   end
   
+  # Return true if the buffer is empty.
   def empty?
     return @fill_count == 0
   end
   
+  # Return true if the buffer is full (fill count == buffer size).
   def full?
     return (@fill_count == size)
   end
 
+  # Change the buffer size, allocating a new backing array at the same time.
   def resize size
     rv = false
     if(size != @buffer.count)
@@ -41,6 +62,8 @@ class CircularBuffer
     return rv
   end
   
+  # Return an array containing the data layed out contiguously (data normally is
+  # split somewhere along the backing array).
   def to_ary
     if empty?
       return []
@@ -59,6 +82,7 @@ class CircularBuffer
     end
   end
   
+  # push a single data element.
   def push element
     if full?
       raise ArgumentError, "buffer is full, and override_when_full is false" unless @override_when_full
@@ -81,12 +105,14 @@ class CircularBuffer
     end
   end
 
+  # push an array of data elements.
   def push_ary ary
     ary.each do |element|
       push element
     end
   end
 
+  # access the latest data element.
   def newest relative_index = 0
     raise ArgumentError, "buffer is empty" if empty?
     raise ArgumentError, "relative_index is greater or equal to @fill_count" if relative_index >= @fill_count
@@ -105,6 +131,7 @@ class CircularBuffer
     return @buffer[absIdx];
   end
   
+  # access the oldest data element.
   def oldest relative_index = 0
     raise ArgumentError, "buffer is empty" if empty?
     raise ArgumentError, "relative_index is greater or equal to @fill_count" if relative_index >= @fill_count

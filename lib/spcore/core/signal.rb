@@ -1,47 +1,67 @@
 module SPCore
-
+# Store signal data and provide some useful methods for working with
+# (testing and analyzing) the data.
+#
+# @author James Tunnell
 class Signal
   include Hashmake::HashMakeable
   
+  # Used to process hashed arguments in #initialize.
   ARG_SPECS = [
     Hashmake::ArgSpec.new(:key => :data, :reqd => true, :type => Array, :validator => ->(a){ a.any? }),
     Hashmake::ArgSpec.new(:key => :sample_rate, :reqd => true, :type => Float, :validator => ->(a){ a > 0.0 })
   ]
   
   attr_reader :data, :sample_rate
-  
+
+  # A new instance of Signal.
+  #
+  # @param [Hash] args Hashed arguments. Required keys are :data and :sample_rate.
+  #                    See ARG_SPECS for more details.
   def initialize hashed_args
     hash_make Signal::ARG_SPECS, hashed_args
   end
   
+  # Produce a new Signal object with the same data.
   def clone
     Signal.new(:data => @data.clone, :sample_rate => @sample_rate)
   end
   
+  # Produce a new Signal object with a subset of the current signal data.
+  # @param [Range] range Used to pick the data range.
   def subset range
     Signal.new(:data => @data[range], :sample_rate => @sample_rate)
   end
   
+  # Size of the signal data.
   def size
     @data.size
   end
   
+  # Access signal data.
   def [](arg)
     @data[arg]
   end
   
+  # Increase the sample rate of signal data by the given factor using
+  # discrete upsampling method.
   def upsample_discrete upsample_factor, filter_order
     @data = DiscreteResampling.upsample @data, @sample_rate, upsample_factor, filter_order
     @sample_rate *= upsample_factor
     return self
   end
 
+  # Increase the sample rate of signal data by the given factor using
+  # polynomial interpolation.
   def upsample_polynomial upsample_factor
     @data = PolynomialResampling.upsample @data, @sample_rate, upsample_factor
     @sample_rate *= upsample_factor
     return self
   end
 
+  # Run FFT on signal data to find magnitude of frequency components.
+  # @param convert_to_db If true, magnitudes are converted to dB values.
+  # @return [Hash] contains frequencies mapped to magnitudes.
   def freq_magnitudes convert_to_db = false
     fft_output = FFT.forward @data
     
@@ -62,10 +82,12 @@ class Signal
     return freq_magnitudes
   end
 
+  # Calculate the energy in current signal data.
   def energy
     return @data.inject(0.0){|sum,x| sum + (x * x)}
   end
   
+  # Return a 
   def envelope attack_time, release_time
     raise ArgumentError, "attack_time #{attack_time } is less than or equal to zero" if attack_time <= 0.0
     raise ArgumentError, "release_time #{release_time} is less than or equal to zero" if release_time <= 0.0
@@ -81,6 +103,7 @@ class Signal
     return envelope
   end
   
+  # Add data in array or other signal to the beginning of current data.
   def prepend other
     if other.is_a?(Array)
       @data = other.concat @data
@@ -90,6 +113,7 @@ class Signal
     return self
   end
 
+  # Add data in array or other signal to the end of current data.
   def append other
     if other.is_a?(Array)
       @data = @data.concat other
@@ -99,6 +123,9 @@ class Signal
     return self
   end
   
+  # Add value, values in array, or values in other signal to the current
+  # data values, and update the current data with the results.
+  # @param other Can be Numeric (add same value to all data values), Array, or Signal.
   def +(other)
     if other.is_a?(Numeric)
       @data.each_index do |i|
@@ -120,6 +147,9 @@ class Signal
     return self
   end
   
+  # Subtract value, values in array, or values in other signal from the current
+  # data values, and update the current data with the results.
+  # @param other Can be Numeric (subtract same value from all data values), Array, or Signal.
   def -(other)
     if other.is_a?(Numeric)
       @data.each_index do |i|
@@ -140,7 +170,11 @@ class Signal
     end
     return self
   end
-  
+
+  # Multiply value, values in array, or values in other signal with the current
+  # data values, and update the current data with the results.
+  # @param other Can be Numeric (multiply all data values by the same value),
+  #              Array, or Signal.  
   def *(other)
     if other.is_a?(Numeric)
       @data.each_index do |i|
@@ -162,6 +196,10 @@ class Signal
     return self
   end
   
+  # Divide value, values in array, or values in other signal into the current
+  # data values, and update the current data with the results.
+  # @param other Can be Numeric (divide same all data values by the same value),
+  #              Array, or Signal.
   def /(other)
     if other.is_a?(Numeric)
       @data.each_index do |i|

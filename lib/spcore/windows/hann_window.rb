@@ -1,4 +1,6 @@
 module SPCore
+# Produces a Hann window of a given size (number of samples).
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Hann_.28Hanning.29_window.
 class HannWindow
   attr_reader :data
   def initialize size

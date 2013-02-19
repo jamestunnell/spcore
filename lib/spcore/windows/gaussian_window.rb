@@ -1,5 +1,7 @@
 module SPCore
-class GaussWindow
+# Produces a Gaussian window of a given size (number of samples).
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Gaussian_windows.
+class GaussianWindow
   attr_reader :data
   def initialize size
     @data = Array.new size

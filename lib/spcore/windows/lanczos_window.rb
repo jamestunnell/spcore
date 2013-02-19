@@ -1,4 +1,7 @@
 module SPCore
+# Produces a Lanczos window of a given size (number of samples).
+# The Lanczos window is used in Lanczos resampling.
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Lanczos_window.
 class LanczosWindow
   attr_reader :data
   def initialize size

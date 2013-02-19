@@ -1,4 +1,6 @@
 module SPCore
+# Implement a "cookbook" bandpass filter using the BiquadFilter class,
+# based on the well-known RBJ biquad filter.
 class CookbookBandpassFilter < BiquadFilter
   def initialize sample_rate
     super(sample_rate)

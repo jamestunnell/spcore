@@ -13,6 +13,8 @@ class BiquadFilter
   # this holds the data required to update samples thru a filter
   Struct.new("BiquadState", :b0, :b1, :b2, :a0, :a1, :a2, :x1, :x2, :y1, :y2)
 
+  # A new instance of BiquadFilter.
+  # @param [Numeric] sample_rate The sample rate to use in calculating coefficients.
   def initialize sample_rate
     @sample_rate = sample_rate
     @biquad = Struct::BiquadState.new(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
@@ -20,14 +22,17 @@ class BiquadFilter
     @bandwidth = 0.0
   end
 
+  # Set the filter critical frequency and bandwidth. 
   def set_critical_freq_and_bw critical_freq, bandwidth
     raise NotImplementedError, "set_critical_freq_and_bW should be implemented in the derived class!"
   end
   
+  # Set the filter critical frequency. 
   def critical_freq= critical_freq
     set_critical_freq_and_bw(critical_freq, @bandwidth);
   end
 
+  # Set the filter bandwidth. 
   def bandwidth= bandwidth
     set_critical_freq_and_bw(@critical_freq, bandwidth);
   end
@@ -56,6 +61,8 @@ class BiquadFilter
     return result
   end
 
+  # Calculate the frequency magnitude response for the given frequency.
+  # @param [Numeric] test_freq The frequency to calculate magnitude response at.
   def get_freq_magnitude_response test_freq
     # Method for determining freq magnitude response is from:
     # http://rs-met.com/documents/dsp/BasicDigitalFilters.pdf

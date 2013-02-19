@@ -1,4 +1,6 @@
 module SPCore
+# Produces a triangular window of a given size (number of samples).
+# Endpoints are zero. Midpoint is one. There is a linear slope between endpoints and midpoint.
 class BartlettWindow
   attr_reader :data
   def initialize size

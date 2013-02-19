@@ -11,3 +11,16 @@
 === 0.1.1 / 2013-02-04
 
 Add EnvelopeDetector#attack_time= and EnvelopeDetector#release_time=
+
+=== 0.1.3 / 2013-02-18
+
+* Added:
+** A .cubic_hermite method to Interpolation class (implements cubic hermite polynomial interpolation)
+** Window classes (Blackman, Hann, Hamming, etc.)
+** DFT class, with .forward and .inverse methods.
+** FFT class, with .forward and .inverse methods.
+** Windowed sinc filter, a FIR filter for lowpass and highpass-
+** Dual windowed sinc filter, a FIR filter for bandpass and bandstop.
+** Discrete and Polynomial resampling classes, each with an .upsample method.
+** Plotter class to make graphing with gnuplot easier. Has #plot_1d and #plot_2d methods.
+** Signal class for testing convenience. Contains signal data and has convenience methods for plotting, correlation, energy, etc.

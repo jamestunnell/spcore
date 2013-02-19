@@ -1,4 +1,6 @@
 module SPCore
+# Produces a Bartlett-Hann window of a given size (number of samples).
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Bartlett.E2.80.93Hann_window.
 class BartlettHannWindow
   attr_reader :data
   def initialize size

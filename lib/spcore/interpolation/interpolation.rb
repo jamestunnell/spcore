@@ -1,4 +1,5 @@
 module SPCore
+  # Provide interpolation methods, including linear and polynomial.
 class Interpolation
   # Linear Interpolation Equation:
   #

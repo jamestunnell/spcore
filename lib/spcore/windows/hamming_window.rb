@@ -1,4 +1,6 @@
 module SPCore
+# Produces a Hamming window of a given size (number of samples).
+# For more info, see https://en.wikipedia.org/wiki/Window_function#Hamming_window.
 class HammingWindow
   attr_reader :data
   def initialize size

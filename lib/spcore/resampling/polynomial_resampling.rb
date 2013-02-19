@@ -1,4 +1,6 @@
 module SPCore
+# Provide resampling methods (upsampling and downsampling) using
+# polynomial interpolation.
 class PolynomialResampling
   
   def self.upsample input, sample_rate, upsample_factor

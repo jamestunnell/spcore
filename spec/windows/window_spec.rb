@@ -5,14 +5,14 @@ describe 'windows' do
     size = 512
     
     window_classes = [
-      #SPCore::RectangleWindow,
+      #SPCore::RectangularWindow,
       #SPCore::HannWindow,
       #SPCore::HammingWindow,
       #SPCore::CosineWindow,
       #SPCore::LanczosWindow,
-      #SPCore::TriangleWindow,
+      #SPCore::TriangularWindow,
       #SPCore::BartlettWindow,
-      #SPCore::GaussWindow,
+      #SPCore::GaussianWindow,
       #SPCore::BartlettHannWindow,
       #SPCore::BlackmanWindow,
       #SPCore::NuttallWindow,
