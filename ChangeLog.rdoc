@@ -24,3 +24,7 @@ Add EnvelopeDetector#attack_time= and EnvelopeDetector#release_time=
 ** Discrete and Polynomial resampling classes, each with an .upsample method.
 ** Plotter class to make graphing with gnuplot easier. Has #plot_1d and #plot_2d methods.
 ** Signal class for testing convenience. Contains signal data and has convenience methods for plotting, correlation, energy, etc.
+
+=== 0.1.4 / 2013-02-19
+
+Fixed gemspec to always depend on gnuplot (not just for development).

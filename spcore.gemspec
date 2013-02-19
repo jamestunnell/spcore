@@ -8,20 +8,20 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{A library of signal processing methods and classes.}
   gem.description   = <<DESCRIPTION
 Contains core signal processing methods and classes, including:
-  Resampling (discrete up, down and up/down, polynomial up, and hybrid up/down)
-  FFT transform (forward and inverse)
-  DFT transform (forward and inverse)
-  Windows (Blackman, Hamming, etc.)
-  Windowed sinc filter for lowpass and highpass.
-  Dual windowed sinc filter for bandpass and bandstop.
-  Interpolation (linear and polynomial)
-  Data plotting via gnuplot (must be installed to use).
-  Delay line
-  Biquad filters
-  Envelope detector
-  Conversion from dB-linear and linear-dB
-  Oscillator with selectable wave type (sine, square, triangle, sawtooth)
-  Signal abstraction class.
+  * Resampling (discrete up, down and up/down, polynomial up, and hybrid up/down).
+  * FFT transform (forward and inverse).
+  * DFT transform (forward and inverse).
+  * Windows (Blackman, Hamming, etc.).
+  * Windowed sinc filter for lowpass and highpass.
+  * Dual windowed sinc filter for bandpass and bandstop.
+  * Interpolation (linear and polynomial).
+  * Data plotting via gnuplot (must be installed to use).
+  * Delay line.
+  * Biquad filters.
+  * Envelope detector.
+  * Conversion from dB-linear and linear-dB.
+  * Oscillator with selectable wave type (sine, square, triangle, sawtooth).
+  * Signal abstraction class.
 
 DESCRIPTION
   gem.license       = "MIT"
@@ -35,11 +35,11 @@ DESCRIPTION
   gem.require_paths = ['lib']
 
   gem.add_dependency 'hashmake'
+  gem.add_dependency 'gnuplot'
 
   gem.add_development_dependency 'bundler', '~> 1.0'
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2.4'
   gem.add_development_dependency 'yard', '~> 0.8'
   gem.add_development_dependency 'pry'
-  gem.add_development_dependency 'gnuplot'
 end
