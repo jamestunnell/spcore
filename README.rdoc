@@ -1,6 +1,6 @@
 = spcore
 
-* {Homepage}[https://rubygems.org/gems/spcore]
+* {Homepage}[https://github.com/jamestunnell/spcore]
 * {Documentation}[http://rubydoc.info/gems/spcore/frames]
 * {Email}[jamestunnell@lavabit.com]
 

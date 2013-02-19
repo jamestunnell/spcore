@@ -7,27 +7,12 @@ Gem::Specification.new do |gem|
   gem.version       = SPCore::VERSION
   gem.summary       = %q{A library of signal processing methods and classes.}
   gem.description   = <<DESCRIPTION
-Contains core signal processing methods and classes, including:
-  * Resampling (discrete up, down and up/down, polynomial up, and hybrid up/down).
-  * FFT transform (forward and inverse).
-  * DFT transform (forward and inverse).
-  * Windows (Blackman, Hamming, etc.).
-  * Windowed sinc filter for lowpass and highpass.
-  * Dual windowed sinc filter for bandpass and bandstop.
-  * Interpolation (linear and polynomial).
-  * Data plotting via gnuplot (must be installed to use).
-  * Delay line.
-  * Biquad filters.
-  * Envelope detector.
-  * Conversion from dB-linear and linear-dB.
-  * Oscillator with selectable wave type (sine, square, triangle, sawtooth).
-  * Signal abstraction class.
-
+A library of signal processing methods and classes for resampling, frequency domain transform (FFT and DFT), windowing (Blackman, Hamming, etc.), FIR filtering (windowed sinc), interpolation (linear and polynomial), plotting data, waveform generation, and more!
 DESCRIPTION
   gem.license       = "MIT"
   gem.authors       = ["James Tunnell"]
   gem.email         = "jamestunnell@lavabit.com"
-  gem.homepage      = "https://rubygems.org/gems/spcore"
+  gem.homepage      = "https://github.com/jamestunnell/spcore"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
