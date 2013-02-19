@@ -5,15 +5,23 @@ require File.expand_path('../lib/spcore/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.name          = "spcore"
   gem.version       = SPCore::VERSION
-  gem.summary       = %q{Perform basic signal processing functions (delay line, filters, envelope detection, etc...).}
+  gem.summary       = %q{A library of signal processing methods and classes.}
   gem.description   = <<DESCRIPTION
-Contains core signal processing functions, including:
+Contains core signal processing methods and classes, including:
+  Resampling (discrete up, down and up/down, polynomial up, and hybrid up/down)
+  FFT transform (forward and inverse)
+  DFT transform (forward and inverse)
+  Windows (Blackman, Hamming, etc.)
+  Windowed sinc filter for lowpass and highpass.
+  Dual windowed sinc filter for bandpass and bandstop.
+  Interpolation (linear and polynomial)
+  Data plotting via gnuplot (must be installed to use).
   Delay line
   Biquad filters
   Envelope detector
   Conversion from dB-linear and linear-dB
-  Linear interpolation
   Oscillator with selectable wave type (sine, square, triangle, sawtooth)
+  Signal abstraction class.
 
 DESCRIPTION
   gem.license       = "MIT"
