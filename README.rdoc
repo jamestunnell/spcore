@@ -2,7 +2,7 @@
 
 * {Homepage}[https://rubygems.org/gems/spcore]
 * {Documentation}[http://rubydoc.info/gems/spcore/frames]
-* {Email}[mailto:jamestunnell at lavabit.com]
+* {Email}[jamestunnell@lavabit.com]
 
 == Description
 

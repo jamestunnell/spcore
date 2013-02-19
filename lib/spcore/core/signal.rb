@@ -16,8 +16,8 @@ class Signal
 
   # A new instance of Signal.
   #
-  # @param [Hash] args Hashed arguments. Required keys are :data and :sample_rate.
-  #                    See ARG_SPECS for more details.
+  # @param [Hash] hashed_args Hashed arguments. Required keys are :data and
+  #                           :sample_rate. See ARG_SPECS for more details.
   def initialize hashed_args
     hash_make Signal::ARG_SPECS, hashed_args
   end
@@ -43,9 +43,14 @@ class Signal
     @data[arg]
   end
   
-  def plot_data
-    plotter = Plotter.new(:title => "signal data sequence", :xtitle => "sample numbers", :ytitle => "sample values")
-    plotter.plot_1d "signal data" => @data
+  # Plot the signal data, either against sample numbers or fraction of total samples.
+  # @param plot_against_fraction If false, plot data against sample number. If true,
+  #                              plot against fraction of total samples.
+  def plot_data plot_against_fraction
+    xtitle = (plot_against_fraction ? "fraction of total samples" : "sample numbers")
+    plotter = Plotter.new(:title => "signal data sequence", :xtitle => xtitle, :ytitle => "sample values")
+    titled_sequence = {"signal data" => @data}
+    plotter.plot_1d titled_sequence, plot_against_fraction
   end
   
   # Increase the sample rate of signal data by the given factor using
