@@ -4,8 +4,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 describe SPCore::SincFilter do
   before :all do
     @sample_rate = 4000.0
-    @orders = [62,126,254]
-    @cutoffs = Scale.exponential 400.0..1600.0, 4
+    @orders = [62]
+    @cutoffs = Scale.exponential 400.0..1600.0, 3
   end
   
   context '.highpass' do

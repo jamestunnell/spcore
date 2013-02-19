@@ -43,22 +43,64 @@ class Signal
     @data[arg]
   end
   
+  def plot_data
+    plotter = Plotter.new(:title => "signal data sequence", :xtitle => "sample numbers", :ytitle => "sample values")
+    plotter.plot_1d "signal data" => @data
+  end
+  
   # Increase the sample rate of signal data by the given factor using
   # discrete upsampling method.
+  # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
+  # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
   def upsample_discrete upsample_factor, filter_order
     @data = DiscreteResampling.upsample @data, @sample_rate, upsample_factor, filter_order
     @sample_rate *= upsample_factor
     return self
   end
 
+  # Decrease the sample rate of signal data by the given factor using
+  # discrete downsampling method.
+  # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
+  # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
+  def downsample_discrete downsample_factor, filter_order
+    @data = DiscreteResampling.downsample @data, @sample_rate, downsample_factor, filter_order
+    @sample_rate /= downsample_factor
+    return self
+  end
+
+  # Change the sample rate of signal data by the given up/down factors, using
+  # discrete upsampling and downsampling methods.
+  # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
+  # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
+  # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
+  def resample_discrete upsample_factor, downsample_factor, filter_order
+    @data = DiscreteResampling.resample @data, @sample_rate, upsample_factor, downsample_factor, filter_order
+    @sample_rate *= upsample_factor
+    @sample_rate /= downsample_factor
+    return self
+  end
+  
   # Increase the sample rate of signal data by the given factor using
   # polynomial interpolation.
+  # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
   def upsample_polynomial upsample_factor
     @data = PolynomialResampling.upsample @data, @sample_rate, upsample_factor
     @sample_rate *= upsample_factor
     return self
   end
 
+  # Change the sample rate of signal data by the given up/down factors, using
+  # polynomial upsampling and discrete downsampling.
+  # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
+  # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
+  # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
+  def resample_hybrid upsample_factor, downsample_factor, filter_order
+    @data = HybridResampling.resample @data, @sample_rate, upsample_factor, downsample_factor, filter_order
+    @sample_rate *= upsample_factor
+    @sample_rate /= downsample_factor
+    return self
+  end
+  
   # Run FFT on signal data to find magnitude of frequency components.
   # @param convert_to_db If true, magnitudes are converted to dB values.
   # @return [Hash] contains frequencies mapped to magnitudes.

@@ -40,6 +40,7 @@ require 'spcore/transforms/fft'
 
 require 'spcore/resampling/discrete_resampling'
 require 'spcore/resampling/polynomial_resampling'
+require 'spcore/resampling/hybrid_resampling'
 
 require 'spcore/util/gain'
 require 'spcore/util/limiters'

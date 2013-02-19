@@ -3,8 +3,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe SPCore::EnvelopeDetector do
   describe '#process_sample' do
     it 'should produce an output that follows the amplitude of the input' do
-      sample_rate = 10000.0
-      freqs = [20.0, 200.0, 2000.0]
+      sample_rate = 400.0
+      freqs = [20.0, 60.0]
 
       envelope_start = 1.0
       envelope_end = 0.0

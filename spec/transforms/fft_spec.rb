@@ -5,14 +5,12 @@ require 'gnuplot'
 describe SPCore::FFT do
   context '.forward' do
     it 'should produce a freq magnitude response peak that is within 10 percent of the test freq' do
-      fft_size = 512
+      fft_size = 64
       sample_rate = 400.0
       
       test_freqs = [
-        10.0,
         20.0,
         40.0,
-        80.0,
       ]
       
       test_freqs.each do |freq|
@@ -53,7 +51,7 @@ describe SPCore::FFT do
   context '.inverse' do
 
     it 'should produce a near-identical signal to the original sent into the forward DFT (with energy that is within 10 percent error of original signal)' do
-      fft_size = 128
+      fft_size = 32
       sample_rate = 400.0
       
       test_freqs = [

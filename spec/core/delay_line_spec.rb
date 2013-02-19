@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SPCore::DelayLine do
   it 'should' do
-    SAMPLE_RATE = 44100.0
+    SAMPLE_RATE = 400.0
     MAX_DELAY_SEC = 0.1
     
     5.times do

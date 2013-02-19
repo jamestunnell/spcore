@@ -20,7 +20,7 @@ class Plotter
   # @param [Hash] hashed_args A hash containing initialization parameters.
   #                           All params are optional. See ARG_SPECS for
   #                           parameter details.
-  def initialize hashed_args
+  def initialize hashed_args = {}
     hash_make Plotter::ARG_SPECS, hashed_args
   end
   
@@ -46,13 +46,18 @@ class Plotter
   # @param [Hash] titled_sequences A hash that maps sequence titles to data. The data itself
   #                             is an array of values. In the plot, values will be mapped to
   #                             their index in the sequence. For example, plot_1d could be
-  #                             called passing it the hash { "somedataseq" => [0,2,3,6,3,-1]}  
-  def plot_1d titled_sequences
+  #                             called passing it the hash { "somedataseq" => [0,2,3,6,3,-1]}
+  # @param plot_against_fraction If true, instead of plotting samples against sample number, plot
+  #                              them against the fraction (sample_number / total_samples).
+  def plot_1d titled_sequences, plot_against_fraction = false
     datasets = []
     titled_sequences.each do |title, sequence|
       indices = Array.new(sequence.size)
       sequence.each_index do |i|
         indices[i] = i
+        if plot_against_fraction
+          indices[i] /= sequence.size.to_f
+        end
       end
       
       dataset = Gnuplot::DataSet.new( [indices, sequence] ){ |ds|
