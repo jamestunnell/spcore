@@ -11,13 +11,13 @@ class DualSincFilter
   include Hashmake::HashMakeable
   
   # Use to process hashed args in #initialize.
-  ARG_SPECS = [
-    Hashmake::ArgSpec.new(:key => :order, :reqd => true, :type => Fixnum, :validator => ->(a){ a % 2 == 0 } ),
-    Hashmake::ArgSpec.new(:key => :sample_rate, :reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
-    Hashmake::ArgSpec.new(:key => :left_cutoff_freq, :reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
-    Hashmake::ArgSpec.new(:key => :right_cutoff_freq, :reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
-    Hashmake::ArgSpec.new(:key => :window_class, :reqd => false, :type => Class, :default => BlackmanWindow ),
-  ]
+  ARG_SPECS = {
+    :order => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a % 2 == 0 } ),
+    :sample_rate => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
+    :left_cutoff_freq => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
+    :right_cutoff_freq => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
+    :window_class => arg_spec(:reqd => false, :type => Class, :default => BlackmanWindow ),
+  }
   
   attr_reader :bandpass_fir, :bandstop_fir, :left_filter, :right_filter
   

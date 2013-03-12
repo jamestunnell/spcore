@@ -4,10 +4,10 @@ class SignalGenerator
   include Hashmake::HashMakeable
   
   # used to process hashed args in #initialize.
-  ARG_SPECS = [
-    Hashmake::ArgSpec.new(:key => :size, :reqd => true, :type => Fixnum, :validator => ->(a){ a > 0 }),
-    Hashmake::ArgSpec.new(:key => :sample_rate, :reqd => true, :type => Float, :validator => ->(a){ a > 0.0 })
-  ]
+  ARG_SPECS = {
+    :size => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0 }),
+    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 })
+  }
   
   attr_reader :sample_rate, :size
   

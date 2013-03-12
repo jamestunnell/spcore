@@ -8,11 +8,11 @@ class DelayLine
   attr_reader :sample_rate, :max_delay_seconds, :delay_seconds, :delay_samples
 
   # Used to process hashed arguments in #initialize.
-  ARG_SPECS = [
-    Hashmake::ArgSpec.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
-    Hashmake::ArgSpec.new(:reqd => true, :key => :max_delay_seconds, :type => Float, :validator => ->(a){ (a > 0.0) } ),
-    Hashmake::ArgSpec.new(:reqd => false, :key => :delay_seconds, :type => Float, :default => 0.0, :validator => ->(a){ a >= 0.0 } ),
-  ]
+  ARG_SPECS = {
+    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    :max_delay_seconds => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ (a > 0.0) } ),
+    :delay_seconds => arg_spec(:reqd => false, :type => Float, :default => 0.0, :validator => ->(a){ a >= 0.0 } ),
+  }
   
   # A new instance of DelayLine. The circular buffer is filled by pushing an array
   # of zeros.

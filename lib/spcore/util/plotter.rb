@@ -7,14 +7,14 @@ class Plotter
   include Hashmake::HashMakeable
   
   # Used to process hashed args passed to #initialize.
-  ARG_SPECS = [
-    Hashmake::ArgSpec.new(:key => :title, :type => String, :reqd => false, :default => ""),
-    Hashmake::ArgSpec.new(:key => :xlabel, :type => String, :reqd => false, :default => "x"),
-    Hashmake::ArgSpec.new(:key => :ylabel, :type => String, :reqd => false, :default => "y"),
-    Hashmake::ArgSpec.new(:key => :linestyle, :type => String, :reqd => false, :default => "lines"),
-    Hashmake::ArgSpec.new(:key => :linewidth, :type => Fixnum, :reqd => false, :default => 1, :validator => ->(a){ a >= 1 }),
-    Hashmake::ArgSpec.new(:key => :logscale, :type => String, :reqd => false, :default => ""),
-  ]
+  ARG_SPECS = {
+    :title => arg_spec(:type => String, :reqd => false, :default => ""),
+    :xlabel => arg_spec(:type => String, :reqd => false, :default => "x"),
+    :ylabel => arg_spec(:type => String, :reqd => false, :default => "y"),
+    :linestyle => arg_spec(:type => String, :reqd => false, :default => "lines"),
+    :linewidth => arg_spec(:type => Fixnum, :reqd => false, :default => 1, :validator => ->(a){ a >= 1 }),
+    :logscale => arg_spec(:type => String, :reqd => false, :default => ""),
+  }
   
   # A new instance of Plotter.
   # @param [Hash] hashed_args A hash containing initialization parameters.

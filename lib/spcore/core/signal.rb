@@ -7,10 +7,10 @@ class Signal
   include Hashmake::HashMakeable
   
   # Used to process hashed arguments in #initialize.
-  ARG_SPECS = [
-    Hashmake::ArgSpec.new(:key => :data, :reqd => true, :type => Array, :validator => ->(a){ a.any? }),
-    Hashmake::ArgSpec.new(:key => :sample_rate, :reqd => true, :type => Float, :validator => ->(a){ a > 0.0 })
-  ]
+  ARG_SPECS = {
+    :data => arg_spec(:reqd => true, :type => Array, :validator => ->(a){ a.any? }),
+    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 })
+  }
   
   attr_reader :data, :sample_rate
 

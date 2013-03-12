@@ -6,11 +6,11 @@ class EnvelopeDetector
   include Hashmake::HashMakeable
   
   # Used to process hashed arguments in #initialize.
-  ARG_SPECS = [
-    Hashmake::ArgSpec.new(:reqd => true, :key => :sample_rate, :type => Float, :validator => ->(a){ a > 0.0 } ),
-    Hashmake::ArgSpec.new(:reqd => true, :key => :attack_time, :type => Float, :validator => ->(a){ a > 0.0 } ),
-    Hashmake::ArgSpec.new(:reqd => true, :key => :release_time, :type => Float, :validator => ->(a){ a > 0.0 } ),
-  ]
+  ARG_SPECS = {
+    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    :attack_time => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    :release_time => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
+  }
 
   attr_reader :envelope, :sample_rate, :attack_time, :release_time
 
