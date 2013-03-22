@@ -28,3 +28,11 @@ Add EnvelopeDetector#attack_time= and EnvelopeDetector#release_time=
 === 0.1.4 / 2013-02-19
 
 Fixed gemspec to always depend on gnuplot (not just for development).
+
+=== 0.1.5 / 2013-02-19
+
+Adjust project documentation.
+
+=== 0.1.6 / 2013-03-21
+
+Update to be compatible with hashmake-0.1.6.
