@@ -17,7 +17,7 @@ class DiscreteResampling
     filter = SincFilter.new(
       :sample_rate => (sample_rate * upsample_factor),
       :order => filter_order,
-      :cutoff_freq => (sample_rate / 2),
+      :cutoff_freq => (sample_rate / 2.0),
       :window_class => NuttallWindow
     )
     
@@ -37,7 +37,7 @@ class DiscreteResampling
 
     filter = SincFilter.new(
       :sample_rate => sample_rate, :order => filter_order,
-      :cutoff_freq => ((sample_rate / downsample_factor) / 2.0),
+      :cutoff_freq => ((sample_rate.to_f / downsample_factor) / 2.0),
       :window_class => NuttallWindow
     )
     

@@ -9,7 +9,7 @@ class Signal
   # Used to process hashed arguments in #initialize.
   ARG_SPECS = {
     :data => arg_spec(:reqd => true, :type => Array, :validator => ->(a){ a.any? }),
-    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 })
+    :sample_rate => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0.0 })
   }
   
   attr_reader :data, :sample_rate

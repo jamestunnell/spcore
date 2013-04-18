@@ -60,7 +60,7 @@ class FIR
     
     response = {}
     output.each_index do |n|
-      frequency = (@sample_rate * n) / (output.size * 2)
+      frequency = (@sample_rate * n) / (output.size * 2.0)
       response[frequency] = output[n]
     end
     

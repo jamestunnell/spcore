@@ -4,7 +4,7 @@ require 'pry'
 
 describe 'cookbook filter' do
   it 'should produce a nice frequency response graph' do
-    #sample_rate = 4000.0
+    #sample_rate = 4000
     #crit_freq = 400.0
     #min_test_freq = 10.0
     #max_test_freq = (sample_rate / 2.0) - 1.0

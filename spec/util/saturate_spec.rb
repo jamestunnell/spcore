@@ -11,7 +11,7 @@ describe SPCore::Saturation do
       z_data = []
       
       osc = SPCore::Oscillator.new(
-        :sample_rate => 100.0,
+        :sample_rate => 100,
         :frequency => 1.0,
         :wave_type => SPCore::Oscillator::WAVE_SINE,
         :amplitude => 2.5
@@ -62,7 +62,7 @@ describe SPCore::Saturation do
       y_data = []
       z_data = []
       
-      osc = SPCore::Oscillator.new :sample_rate => 100.0, :frequency => 1.0, :wave_type => SPCore::Oscillator::WAVE_SINE, :amplitude => 2.5
+      osc = SPCore::Oscillator.new :sample_rate => 100, :frequency => 1.0, :wave_type => SPCore::Oscillator::WAVE_SINE, :amplitude => 2.5
       (4 * osc.sample_rate / osc.frequency).to_i.times do |n|
         x = n / osc.sample_rate
         y = osc.sample

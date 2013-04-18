@@ -6,7 +6,7 @@ class SignalGenerator
   # used to process hashed args in #initialize.
   ARG_SPECS = {
     :size => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0 }),
-    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 })
+    :sample_rate => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0 })
   }
   
   attr_reader :sample_rate, :size

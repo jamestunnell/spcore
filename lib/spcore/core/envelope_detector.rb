@@ -7,7 +7,7 @@ class EnvelopeDetector
   
   # Used to process hashed arguments in #initialize.
   ARG_SPECS = {
-    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    :sample_rate => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0.0 } ),
     :attack_time => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
     :release_time => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
   }

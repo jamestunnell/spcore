@@ -14,7 +14,7 @@ class SincFilter
   # Use to process hashed args in #initialize.  
   ARG_SPECS = {
     :order => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a % 2 == 0 } ),
-    :sample_rate => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
+    :sample_rate => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0 } ),
     :cutoff_freq => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
     :window_class => arg_spec(:reqd => false, :type => Class, :default => BlackmanWindow ),
   }
@@ -26,10 +26,10 @@ class SincFilter
   def initialize args
     hash_make SincFilter::ARG_SPECS, args
     
-    raise ArgumentError, "cutoff_freq is greater than 0.5 * sample_rate" if @cutoff_freq > (@sample_rate / 2)
+    raise ArgumentError, "cutoff_freq is greater than 0.5 * sample_rate" if @cutoff_freq > (@sample_rate / 2.0)
     
     size = @order + 1
-    transition_freq = @cutoff_freq / @sample_rate
+    transition_freq = @cutoff_freq.to_f / @sample_rate
     b = TWO_PI * transition_freq
     
     # make FIR filter kernels for lowpass and highpass

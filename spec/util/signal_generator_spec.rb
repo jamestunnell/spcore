@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SPCore::SignalGenerator do
   before :all do
-    @sample_rate = 600.0
+    @sample_rate = 600
     @test_freqs = [
       65.0, 100.0, 250.0
     ]

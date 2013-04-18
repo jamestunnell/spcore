@@ -4,7 +4,7 @@ require 'pry'
 
 describe SPCore::Oscillator do
   #it 'should look like a ...' do
-  #  sample_rate = 44000.0
+  #  sample_rate = 44000
   #  test_freq = 100.0
   #  osc = SPCore::Oscillator.new :sample_rate => sample_rate, :frequency => test_freq, :wave_type => SPCore::Oscillator::WAVE_SQUARE
   #  N = (5 * sample_rate / test_freq).to_i
@@ -32,7 +32,7 @@ describe SPCore::Oscillator do
   #end
   
   before :each do
-    @sample_rate = 40000.0
+    @sample_rate = 40000
     @freqs = [ 20.0, 200.0, 400.0 ]
   end
   

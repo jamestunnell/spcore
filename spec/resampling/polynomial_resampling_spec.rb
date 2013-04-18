@@ -5,7 +5,7 @@ describe SPCore::PolynomialResampling do
 
   context '.upsample' do
     it 'should produce output signal with the same max frequency (put through forward DFT)' do
-      sample_rate = 400.0
+      sample_rate = 400
       test_freq = 10.0
       size = (sample_rate * 5.0 / test_freq).to_i
       upsample_factor = 2.5

@@ -7,7 +7,7 @@ describe SPCore::DFT do
   
     it 'should produce a freq magnitude response peak that is within 10 percent of the test freq' do
       dft_size = 64
-      sample_rate = 400.0
+      sample_rate = 400
       
       test_freqs = [
         20.0,
@@ -39,7 +39,7 @@ describe SPCore::DFT do
   
     it 'should produce a near-identical signal to the original sent into the forward DFT (with energy that is within 10 percent error of original signal)' do
       dft_size = 32
-      sample_rate = 400.0
+      sample_rate = 400
       
       test_freqs = [
         20.0,

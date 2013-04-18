@@ -22,12 +22,12 @@ class Oscillator
   
   # Used to process hashed arguments in #initialize.
   ARG_SPECS = {
-    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    :sample_rate => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0 } ),
     :wave_type => arg_spec(:reqd => false, :type => Symbol, :default => WAVE_SINE, :validator => ->(a){ WAVES.include? a } ),
-    :frequency => arg_spec(:reqd => false, :type => Float, :default => 1.0, :validator => ->(a){ a > 0.0 } ),
-    :amplitude => arg_spec(:reqd => false, :type => Float, :default => 1.0 ),
-    :phase_offset => arg_spec(:reqd => false, :type => Float, :default => 0.0 ),
-    :dc_offset => arg_spec(:reqd => false, :type => Float, :default => 0.0 ),
+    :frequency => arg_spec(:reqd => false, :type => Numeric, :default => 1.0, :validator => ->(a){ a > 0.0 } ),
+    :amplitude => arg_spec(:reqd => false, :type => Numeric, :default => 1.0 ),
+    :phase_offset => arg_spec(:reqd => false, :type => Numeric, :default => 0.0 ),
+    :dc_offset => arg_spec(:reqd => false, :type => Numeric, :default => 0.0 ),
   }
   
   # A new instance of Oscillator. The controllable wave parameters are frequency,

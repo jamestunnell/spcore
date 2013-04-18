@@ -9,7 +9,7 @@ class DelayLine
 
   # Used to process hashed arguments in #initialize.
   ARG_SPECS = {
-    :sample_rate => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ a > 0.0 } ),
+    :sample_rate => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0.0 } ),
     :max_delay_seconds => arg_spec(:reqd => true, :type => Float, :validator => ->(a){ (a > 0.0) } ),
     :delay_seconds => arg_spec(:reqd => false, :type => Float, :default => 0.0, :validator => ->(a){ a >= 0.0 } ),
   }

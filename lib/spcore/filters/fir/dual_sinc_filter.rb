@@ -13,7 +13,7 @@ class DualSincFilter
   # Use to process hashed args in #initialize.
   ARG_SPECS = {
     :order => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a % 2 == 0 } ),
-    :sample_rate => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
+    :sample_rate => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0.0 } ),
     :left_cutoff_freq => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
     :right_cutoff_freq => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 } ),
     :window_class => arg_spec(:reqd => false, :type => Class, :default => BlackmanWindow ),
@@ -26,8 +26,8 @@ class DualSincFilter
   def initialize args
     hash_make DualSincFilter::ARG_SPECS, args
     
-    raise ArgumentError, "left_cutoff_freq is greater than 0.5 * sample_rate" if @left_cutoff_freq > (@sample_rate / 2)
-    raise ArgumentError, "right_cutoff_freq is greater than 0.5 * sample_rate" if @right_cutoff_freq > (@sample_rate / 2)
+    raise ArgumentError, "left_cutoff_freq is greater than 0.5 * sample_rate" if @left_cutoff_freq > (@sample_rate * 0.5)
+    raise ArgumentError, "right_cutoff_freq is greater than 0.5 * sample_rate" if @right_cutoff_freq > (@sample_rate * 0.5)
     raise ArgumentError, "left_cutoff_freq is not less than right_cutoff_freq" unless @left_cutoff_freq < @right_cutoff_freq 
     
     @left_filter = SincFilter.new(
@@ -57,8 +57,8 @@ class DualSincFilter
       bandstop_kernel[size - 1 - n] = bandstop_kernel[n] = @left_filter.lowpass_fir.kernel[n] + @right_filter.highpass_fir.kernel[n]
     end
 
-    left_transition_freq = @left_cutoff_freq / @sample_rate
-    right_transition_freq = @right_cutoff_freq / @sample_rate
+    left_transition_freq = @left_cutoff_freq.to_f / @sample_rate
+    right_transition_freq = @right_cutoff_freq.to_f / @sample_rate
     bw_times_two = 2.0 * (right_transition_freq - left_transition_freq)
     window_center_val = window.data[@order / 2]
     

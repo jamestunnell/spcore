@@ -36,3 +36,7 @@ Adjust project documentation.
 === 0.1.6 / 2013-03-21
 
 Update to be compatible with hashmake-0.1.6.
+
+=== 0.1.7  2013-04-18
+
+Require all sample rate args to be Fixnum.

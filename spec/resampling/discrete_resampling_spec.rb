@@ -5,7 +5,7 @@ describe SPCore::DiscreteResampling do
 
   context '.upsample' do
     it 'should produce output signal with the same max frequency (put through forward FFT)' do
-      sample_rate = 400.0
+      sample_rate = 400
       test_freq = 10.0
       size = 64
       upsample_factor = 4
@@ -30,7 +30,7 @@ describe SPCore::DiscreteResampling do
 
   context '.downsample' do
     it 'should produce output signal with the same max frequency (put through forward FFT)' do
-      sample_rate = 400.0
+      sample_rate = 400
       test_freq = 10.0
       size = 128
       downsample_factor = 4
@@ -55,7 +55,7 @@ describe SPCore::DiscreteResampling do
 
   context '.resample' do
     it 'should produce output signal with the same max frequency (put through forward FFT)' do
-      sample_rate = 400.0
+      sample_rate = 400
       test_freq = 10.0
       size = 64
       upsample_factor = 4
