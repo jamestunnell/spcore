@@ -8,7 +8,7 @@ describe SPCore::HybridResampling do
       sample_rate = 400
       test_freq = 10.0
       size = 64
-      upsample_factor = 4
+      upsample_factor = 10
       downsample_factor = 4
       order = (sample_rate / test_freq).to_i
       
@@ -16,7 +16,7 @@ describe SPCore::HybridResampling do
       signal1 *= BlackmanWindow.new(size).data
       signal2 = signal1.clone.resample_hybrid upsample_factor, downsample_factor, order
       
-      #plotter = Plotter.new(:title => "Discrete resampling, up by #{upsampling_factor}, down by #{downsample_factor}")
+      #plotter = Plotter.new(:title => "Discrete resampling, up by #{upsample_factor}, down by #{downsample_factor}")
       #plotter.plot_1d("original signal" => signal1.data, "resampled signal" => signal2.data)
 
       signal2.size.should eq(signal1.size * upsample_factor / downsample_factor)
