@@ -1,17 +1,17 @@
 module SPCore
   # Provide interpolation methods, including linear and polynomial.
 class Interpolation
-  # Linear Interpolation Equation:
-  #
-  #        (x3 - x1)(y2 - y1)
-  #  y3 =  ------------------  + y1
-  #            (x2 - x1)
-  #
-  def self.linear x1, y1, x2, y2, x3
-    y3 = ((x3 - x1) * (y2 - y1)) / (x2 - x1);
-    y3 += y1;
-    return y3;
-  end
+  ## Linear Interpolation Equation:
+  ##
+  ##        (x3 - x1)(y2 - y1)
+  ##  y3 =  ------------------  + y1
+  ##            (x2 - x1)
+  ##
+  #def self.linear x1, y1, x2, y2, x3
+  #  y3 = ((x3 - x1) * (y2 - y1)) / (x2 - x1);
+  #  y3 += y1;
+  #  return y3;
+  #end
 
   # Linear interpolator
   # Given 2 sample points, interpolates a value anywhere between the two points.

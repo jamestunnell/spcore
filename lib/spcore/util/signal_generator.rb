@@ -35,8 +35,8 @@ class SignalGenerator
       oscs.push Oscillator.new args.merge(:frequency => freq)
     end
     
-    output = Array.new(size, 0.0)
-    size.times do |n|
+    output = Array.new(@size, 0.0)
+    @size.times do |n|
       oscs.each do |osc|
         output[n] += osc.sample
       end

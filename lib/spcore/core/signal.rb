@@ -134,24 +134,14 @@ class Signal
     return @data.inject(0.0){|sum,x| sum + (x * x)}
   end
   
-  # Return a 
-  def envelope attack_time, release_time
-    raise ArgumentError, "attack_time #{attack_time } is less than or equal to zero" if attack_time <= 0.0
-    raise ArgumentError, "release_time #{release_time} is less than or equal to zero" if release_time <= 0.0
-    
-    env_detector = EnvelopeDetector.new(:attack_time => attack_time, :release_time => release_time, :sample_rate => @sample_rate)
-    
-    envelope = Array.new(@data.count)
-    
-    for i in 0...@data.count do
-      envelope[i] = env_detector.process_sample @data[i]
-    end
-    
-    return envelope
+  # Determine the envelope of the current Signal and return the resulting data
+  # in a new Signal object.
+  def envelope
+    return Envelope.new(@data)
   end
   
   # Add data in array or other signal to the beginning of current data.
-  def prepend other
+  def prepend! other
     if other.is_a?(Array)
       @data = other.concat @data
     elsif other.is_a?(Signal)
@@ -161,7 +151,7 @@ class Signal
   end
 
   # Add data in array or other signal to the end of current data.
-  def append other
+  def append! other
     if other.is_a?(Array)
       @data = @data.concat other
     elsif other.is_a?(Signal)
@@ -173,7 +163,7 @@ class Signal
   # Add value, values in array, or values in other signal to the current
   # data values, and update the current data with the results.
   # @param other Can be Numeric (add same value to all data values), Array, or Signal.
-  def +(other)
+  def add!(other)
     if other.is_a?(Numeric)
       @data.each_index do |i|
         @data[i] += other
@@ -193,11 +183,37 @@ class Signal
     end
     return self
   end
+
+  # Add value, values in array, or values in other signal to the current
+  # data values, and return a new Signal object with the results.
+  # @param other Can be Numeric (add same value to all data values), Array, or Signal.
+  def add(other)
+    new_data = Array.new(@data.size)
+    
+    if other.is_a?(Numeric)
+      @data.each_index do |i|
+        new_data[i] = @data[i] + other
+      end
+    elsif other.is_a?(Signal)
+      raise ArgumentError, "other.data.size #{other.size} is not equal to data.size #{@data.size}" if other.data.size != @data.size
+      @data.each_index do |i|
+        new_data[i] = @data[i] + other.data[i]
+      end
+    elsif other.is_a?(Array)
+      raise ArgumentError, "other.size #{other.size} is not equal to data.size #{@data.size}" if other.size != @data.size
+      @data.each_index do |i|
+        new_data[i] = @data[i] + other[i]
+      end
+    else
+      raise ArgumentError, "other is not a Numeric, Signal, or Array"
+    end
+    return Signal.new(:data => new_data, :sample_rate => @sample_rate)
+  end
   
   # Subtract value, values in array, or values in other signal from the current
   # data values, and update the current data with the results.
   # @param other Can be Numeric (subtract same value from all data values), Array, or Signal.
-  def -(other)
+  def subtract!(other)
     if other.is_a?(Numeric)
       @data.each_index do |i|
         @data[i] -= other
@@ -218,11 +234,37 @@ class Signal
     return self
   end
 
+  # Subtract value, values in array, or values in other signal from the current
+  # data values, and return a new Signal object with the results.
+  # @param other Can be Numeric (subtract same value from all data values), Array, or Signal.
+  def subtract(other)
+    new_data = Array.new(@data.size)
+    
+    if other.is_a?(Numeric)
+      @data.each_index do |i|
+        new_data[i] = @data[i] - other
+      end
+    elsif other.is_a?(Signal)
+      raise ArgumentError, "other.data.size #{other.size} is not equal to data.size #{@data.size}" if other.data.size != @data.size
+      @data.each_index do |i|
+        new_data[i] = @data[i] - other.data[i]
+      end
+    elsif other.is_a?(Array)
+      raise ArgumentError, "other.size #{other.size} is not equal to data.size #{@data.size}" if other.size != @data.size
+      @data.each_index do |i|
+        new_data[i] = @data[i] - other[i]
+      end
+    else
+      raise ArgumentError, "other is not a Numeric, Signal, or Array"
+    end
+    return Signal.new(:data => new_data, :sample_rate => @sample_rate)
+  end
+  
   # Multiply value, values in array, or values in other signal with the current
   # data values, and update the current data with the results.
   # @param other Can be Numeric (multiply all data values by the same value),
   #              Array, or Signal.  
-  def *(other)
+  def multiply!(other)
     if other.is_a?(Numeric)
       @data.each_index do |i|
         @data[i] *= other
@@ -243,11 +285,38 @@ class Signal
     return self
   end
   
+  # Multiply value, values in array, or values in other signal with the current
+  # data values, and return a new Signal object with the results.
+  # @param other Can be Numeric (multiply all data values by the same value),
+  #              Array, or Signal.  
+  def multiply(other)
+    new_data = Array.new(@data.size)
+    
+    if other.is_a?(Numeric)
+      @data.each_index do |i|
+        new_data[i] = @data[i] * other
+      end
+    elsif other.is_a?(Signal)
+      raise ArgumentError, "other.data.size #{other.size} is not equal to data.size #{@data.size}" if other.data.size != @data.size
+      @data.each_index do |i|
+        new_data[i] = @data[i] * other.data[i]
+      end
+    elsif other.is_a?(Array)
+      raise ArgumentError, "other.size #{other.size} is not equal to data.size #{@data.size}" if other.size != @data.size
+      @data.each_index do |i|
+        new_data[i] = @data[i] * other[i]
+      end
+    else
+      raise ArgumentError, "other is not a Numeric, Signal, or Array"
+    end
+    return Signal.new(:data => new_data, :sample_rate => @sample_rate)
+  end
+  
   # Divide value, values in array, or values in other signal into the current
   # data values, and update the current data with the results.
   # @param other Can be Numeric (divide same all data values by the same value),
   #              Array, or Signal.
-  def /(other)
+  def divide!(other)
     if other.is_a?(Numeric)
       @data.each_index do |i|
         @data[i] /= other
@@ -268,10 +337,37 @@ class Signal
     return self
   end
 
-  alias_method :add, :+
-  alias_method :subtract, :-
-  alias_method :multiply, :*
-  alias_method :divide, :/
+  # Divide value, values in array, or values in other signal into the current
+  # data values, and return a new Signal object with the results.
+  # @param other Can be Numeric (divide same all data values by the same value),
+  #              Array, or Signal.
+  def divide(other)
+    new_data = Array.new(@data.size)
+    
+    if other.is_a?(Numeric)
+      @data.each_index do |i|
+        new_data[i] = @data[i] / other
+      end
+    elsif other.is_a?(Signal)
+      raise ArgumentError, "other.data.size #{other.size} is not equal to data.size #{@data.size}" if other.data.size != @data.size
+      @data.each_index do |i|
+        new_data[i] = @data[i] / other.data[i]
+      end
+    elsif other.is_a?(Array)
+      raise ArgumentError, "other.size #{other.size} is not equal to data.size #{@data.size}" if other.size != @data.size
+      @data.each_index do |i|
+        new_data[i] = @data[i] / other[i]
+      end
+    else
+      raise ArgumentError, "other is not a Numeric, Signal, or Array"
+    end
+    return Signal.new(:data => new_data, :sample_rate => @sample_rate)
+  end
+
+  alias_method :+, :add
+  alias_method :-, :subtract
+  alias_method :*, :multiply
+  alias_method :/, :divide
   
   # Determine how well the another signal (g) correlates to the current signal (f).
   # Correlation is determined at every point in f. The signal g must not be

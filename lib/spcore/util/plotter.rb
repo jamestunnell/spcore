@@ -33,7 +33,14 @@ class Plotter
   def plot_2d titled_hashes
     datasets = []
     titled_hashes.each do |title, hash|
-      dataset = Gnuplot::DataSet.new( [hash.keys, hash.values] ){ |ds|
+      # sort the data
+      
+      sorted = {}
+      hash.keys.sort.each do |key|
+        sorted[key] = hash[key]
+      end
+      
+      dataset = Gnuplot::DataSet.new( [sorted.keys, sorted.values] ){ |ds|
         ds.with = @linestyle
         ds.title = title
         ds.linewidth = @linewidth
