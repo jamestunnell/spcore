@@ -89,7 +89,7 @@ class Signal
   # polynomial interpolation.
   # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
   def upsample_polynomial upsample_factor
-    @data = PolynomialResampling.upsample @data, @sample_rate, upsample_factor
+    @data = PolynomialResampling.upsample @data, upsample_factor
     @sample_rate *= upsample_factor
     return self
   end

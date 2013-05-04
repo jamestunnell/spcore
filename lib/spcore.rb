@@ -48,3 +48,5 @@ require 'spcore/util/plotter'
 require 'spcore/util/saturation'
 require 'spcore/util/scale'
 require 'spcore/util/signal_generator'
+
+require 'spcore/analysis/extrema'

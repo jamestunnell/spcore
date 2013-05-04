@@ -3,10 +3,9 @@ module SPCore
 # polynomial interpolation.
 class PolynomialResampling
   
-  def self.upsample input, sample_rate, upsample_factor
+  def self.upsample input, upsample_factor
     raise ArgumentError, "input.size is less than four" unless input.size >= 4
     raise ArgumentError, "upsample_factor is not greater than 1" unless upsample_factor > 1
-    raise ArgumentError, "sample_rate is not greater than 0" unless sample_rate > 0
     
     output = Array.new((upsample_factor * input.size).to_i)
     

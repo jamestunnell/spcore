@@ -9,7 +9,7 @@ class HybridResampling
     raise ArgumentError, "downsample_factor is not greater than 1" unless downsample_factor > 1
     raise ArgumentError, "sample_rate is not greater than 0" unless sample_rate > 0
     
-    upsampled = PolynomialResampling.upsample input, sample_rate, upsample_factor
+    upsampled = PolynomialResampling.upsample input, upsample_factor
     
     needed_samples = upsampled.size % downsample_factor
     if needed_samples == 0
