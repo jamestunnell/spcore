@@ -37,6 +37,10 @@ Adjust project documentation.
 
 Update to be compatible with hashmake-0.1.6.
 
-=== 0.1.7  2013-04-18
+=== 0.1.7 / 2013-04-18
 
 Require all sample rate args to be Fixnum.
+
+=== 0.1.8 / 2013-05-03
+
+Add Envelope and Extrema classes, for signal analysis.

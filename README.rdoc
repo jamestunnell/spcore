@@ -24,6 +24,7 @@ A library of signal processing methods and classes.
 * Conversion from dB-linear and linear-dB
 * Oscillator with selectable wave type (sine, square, triangle, sawtooth)
 * Signal abstraction class
+* Extrema & Envelope measurement
 
 == Examples
 
