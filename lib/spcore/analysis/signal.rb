@@ -54,56 +54,97 @@ class Signal
   end
   
   # Increase the sample rate of signal data by the given factor using
-  # discrete upsampling method.
+  # discrete upsampling method. Modifies current object.
   # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
   # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
-  def upsample_discrete upsample_factor, filter_order
+  def upsample_discrete! upsample_factor, filter_order
     @data = DiscreteResampling.upsample @data, @sample_rate, upsample_factor, filter_order
     @sample_rate *= upsample_factor
     return self
   end
 
+  # Increase the sample rate of signal data by the given factor using
+  # discrete upsampling method. Return result in a new Signal object.
+  # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
+  # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
+  def upsample_discrete upsample_factor, filter_order
+    return self.clone.upsample_discrete!(upsample_factor, filter_order)
+  end
+
   # Decrease the sample rate of signal data by the given factor using
-  # discrete downsampling method.
+  # discrete downsampling method. Modifies current object.
   # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
   # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
-  def downsample_discrete downsample_factor, filter_order
+  def downsample_discrete! downsample_factor, filter_order
     @data = DiscreteResampling.downsample @data, @sample_rate, downsample_factor, filter_order
     @sample_rate /= downsample_factor
     return self
   end
 
+  # Decrease the sample rate of signal data by the given factor using
+  # discrete downsampling method. Return result in a new Signal object.
+  # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
+  # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
+  def downsample_discrete downsample_factor, filter_order
+    return self.clone.downsample_discrete!(downsample_factor, filter_order)
+  end
+
   # Change the sample rate of signal data by the given up/down factors, using
-  # discrete upsampling and downsampling methods.
+  # discrete upsampling and downsampling methods. Modifies current object.
   # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
   # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
   # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
-  def resample_discrete upsample_factor, downsample_factor, filter_order
+  def resample_discrete! upsample_factor, downsample_factor, filter_order
     @data = DiscreteResampling.resample @data, @sample_rate, upsample_factor, downsample_factor, filter_order
     @sample_rate *= upsample_factor
     @sample_rate /= downsample_factor
     return self
   end
+
+  # Change the sample rate of signal data by the given up/down factors, using
+  # discrete upsampling and downsampling methods. Return result in a new Signal object.
+  # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
+  # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
+  # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
+  def resample_discrete upsample_factor, downsample_factor, filter_order
+    return self.clone.resample_discrete!(upsample_factor, downsample_factor, filter_order)
+  end
   
   # Increase the sample rate of signal data by the given factor using
-  # polynomial interpolation.
+  # polynomial interpolation. Modifies current Signal object.
   # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
-  def upsample_polynomial upsample_factor
+  def upsample_polynomial! upsample_factor
     @data = PolynomialResampling.upsample @data, upsample_factor
     @sample_rate *= upsample_factor
     return self
   end
 
+  # Increase the sample rate of signal data by the given factor using
+  # polynomial interpolation. Returns result as a new Signal object.
+  # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
+  def upsample_polynomial upsample_factor
+    return self.clone.upsample_polynomial!(upsample_factor)
+  end
+  
   # Change the sample rate of signal data by the given up/down factors, using
-  # polynomial upsampling and discrete downsampling.
+  # polynomial upsampling and discrete downsampling. Modifies current Signal object.
   # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
   # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
   # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
-  def resample_hybrid upsample_factor, downsample_factor, filter_order
+  def resample_hybrid! upsample_factor, downsample_factor, filter_order
     @data = HybridResampling.resample @data, @sample_rate, upsample_factor, downsample_factor, filter_order
     @sample_rate *= upsample_factor
     @sample_rate /= downsample_factor
     return self
+  end
+
+  # Change the sample rate of signal data by the given up/down factors, using
+  # polynomial upsampling and discrete downsampling. Return result as a new Signal object.
+  # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
+  # @param [Fixnum] downsample_factor Decrease the sample rate by this factor.
+  # @param [Fixnum] filter_order The filter order for the discrete lowpass filter.
+  def resample_hybrid upsample_factor, downsample_factor, filter_order
+    return self.clone.resample_hybrid!(upsample_factor, downsample_factor, filter_order)
   end
   
   # Run FFT on signal data to find magnitude of frequency components.
@@ -134,10 +175,27 @@ class Signal
     return @data.inject(0.0){|sum,x| sum + (x * x)}
   end
   
-  # Determine the envelope of the current Signal and return the resulting data
-  # in a new Signal object.
-  def envelope
-    return Envelope.new(@data)
+  # Calculate signal RMS (root-mean square), also known as quadratic mean, a
+  # statistical measure of the magnitude.
+  def rms
+    Math.sqrt(energy / size)
+  end
+  
+  # Find extrema (maxima, minima) within signal data.
+  def extrema
+    return Extrema.new(@data)
+  end
+  
+  # Determine the envelope of the current Signal and return either a Envelope
+  # or a new Signal object as a result.
+  # @param [True/False] make_signal If true, return envelope data in a new
+  #                     Otherwise, return an Envelope object.
+  def envelope make_signal = false
+    if make_signal
+      return Signal.new(:sample_rate => @sample_rate, :data => Envelope.new(@data).data)
+    else
+      return Envelope.new(@data)
+    end
   end
   
   # Add data in array or other signal to the beginning of current data.
@@ -150,6 +208,11 @@ class Signal
     return self
   end
 
+  # Add data in array or other signal to the beginning of current data.
+  def prepend other
+    clone.prepend! other
+  end
+  
   # Add data in array or other signal to the end of current data.
   def append! other
     if other.is_a?(Array)
@@ -158,6 +221,11 @@ class Signal
       @data = @data.concat other.data
     end
     return self
+  end
+
+  # Add data in array or other signal to the end of current data.
+  def append other
+    clone.append! other
   end
   
   # Add value, values in array, or values in other signal to the current
@@ -188,26 +256,7 @@ class Signal
   # data values, and return a new Signal object with the results.
   # @param other Can be Numeric (add same value to all data values), Array, or Signal.
   def add(other)
-    new_data = Array.new(@data.size)
-    
-    if other.is_a?(Numeric)
-      @data.each_index do |i|
-        new_data[i] = @data[i] + other
-      end
-    elsif other.is_a?(Signal)
-      raise ArgumentError, "other.data.size #{other.size} is not equal to data.size #{@data.size}" if other.data.size != @data.size
-      @data.each_index do |i|
-        new_data[i] = @data[i] + other.data[i]
-      end
-    elsif other.is_a?(Array)
-      raise ArgumentError, "other.size #{other.size} is not equal to data.size #{@data.size}" if other.size != @data.size
-      @data.each_index do |i|
-        new_data[i] = @data[i] + other[i]
-      end
-    else
-      raise ArgumentError, "other is not a Numeric, Signal, or Array"
-    end
-    return Signal.new(:data => new_data, :sample_rate => @sample_rate)
+    clone.add! other
   end
   
   # Subtract value, values in array, or values in other signal from the current
@@ -238,26 +287,7 @@ class Signal
   # data values, and return a new Signal object with the results.
   # @param other Can be Numeric (subtract same value from all data values), Array, or Signal.
   def subtract(other)
-    new_data = Array.new(@data.size)
-    
-    if other.is_a?(Numeric)
-      @data.each_index do |i|
-        new_data[i] = @data[i] - other
-      end
-    elsif other.is_a?(Signal)
-      raise ArgumentError, "other.data.size #{other.size} is not equal to data.size #{@data.size}" if other.data.size != @data.size
-      @data.each_index do |i|
-        new_data[i] = @data[i] - other.data[i]
-      end
-    elsif other.is_a?(Array)
-      raise ArgumentError, "other.size #{other.size} is not equal to data.size #{@data.size}" if other.size != @data.size
-      @data.each_index do |i|
-        new_data[i] = @data[i] - other[i]
-      end
-    else
-      raise ArgumentError, "other is not a Numeric, Signal, or Array"
-    end
-    return Signal.new(:data => new_data, :sample_rate => @sample_rate)
+    clone.subtract! other
   end
   
   # Multiply value, values in array, or values in other signal with the current
@@ -290,26 +320,7 @@ class Signal
   # @param other Can be Numeric (multiply all data values by the same value),
   #              Array, or Signal.  
   def multiply(other)
-    new_data = Array.new(@data.size)
-    
-    if other.is_a?(Numeric)
-      @data.each_index do |i|
-        new_data[i] = @data[i] * other
-      end
-    elsif other.is_a?(Signal)
-      raise ArgumentError, "other.data.size #{other.size} is not equal to data.size #{@data.size}" if other.data.size != @data.size
-      @data.each_index do |i|
-        new_data[i] = @data[i] * other.data[i]
-      end
-    elsif other.is_a?(Array)
-      raise ArgumentError, "other.size #{other.size} is not equal to data.size #{@data.size}" if other.size != @data.size
-      @data.each_index do |i|
-        new_data[i] = @data[i] * other[i]
-      end
-    else
-      raise ArgumentError, "other is not a Numeric, Signal, or Array"
-    end
-    return Signal.new(:data => new_data, :sample_rate => @sample_rate)
+    clone.multiply! other
   end
   
   # Divide value, values in array, or values in other signal into the current
@@ -342,26 +353,7 @@ class Signal
   # @param other Can be Numeric (divide same all data values by the same value),
   #              Array, or Signal.
   def divide(other)
-    new_data = Array.new(@data.size)
-    
-    if other.is_a?(Numeric)
-      @data.each_index do |i|
-        new_data[i] = @data[i] / other
-      end
-    elsif other.is_a?(Signal)
-      raise ArgumentError, "other.data.size #{other.size} is not equal to data.size #{@data.size}" if other.data.size != @data.size
-      @data.each_index do |i|
-        new_data[i] = @data[i] / other.data[i]
-      end
-    elsif other.is_a?(Array)
-      raise ArgumentError, "other.size #{other.size} is not equal to data.size #{@data.size}" if other.size != @data.size
-      @data.each_index do |i|
-        new_data[i] = @data[i] / other[i]
-      end
-    else
-      raise ArgumentError, "other is not a Numeric, Signal, or Array"
-    end
-    return Signal.new(:data => new_data, :sample_rate => @sample_rate)
+    clone.divide! other
   end
 
   alias_method :+, :add
@@ -446,6 +438,97 @@ class Signal
     
     return cross_correlation
   end  
-end
 
+  # Removes all but the given range of frequencies from the signal, using
+  # frequency domain filtering. Modifes and returns the current object.
+  def remove_frequencies! freq_range
+    modify_freq_content freq_range, :remove
+  end
+  
+  # Removes the given range of frequencies from the signal, using
+  # frequency domain filtering. Modifes a clone of the current object,
+  # returning the clone.
+  def remove_frequencies freq_range
+    return self.clone.remove_frequencies!(freq_range)
+  end
+  
+  # Removes all but the given range of frequencies from the signal, using
+  # frequency domain filtering. Modifes and returns the current object.
+  def keep_frequencies! freq_range
+    modify_freq_content freq_range, :keep
+  end
+
+  # Removes all but the given range of frequencies from the signal, using
+  # frequency domain filtering. Modifes a clone of the current object,
+  # returning the clone.
+  def keep_frequencies freq_range
+    return self.clone.keep_frequencies!(freq_range)
+  end
+  
+  private
+  
+  def modify_freq_content freq_range, mod_type
+    nyquist = @sample_rate / 2
+    
+    unless freq_range.min.between?(0, nyquist)
+      raise ArgumentError, "freq_range.min #{freq_range.min} is not between 0 and #{nyquist}"
+    end
+
+    unless freq_range.max.between?(0, nyquist)
+      raise ArgumentError, "freq_range.min #{freq_range.min} is not between 0 and #{nyquist}"
+    end
+    
+    power_of_two = FFT.power_of_two?(size)
+    if power_of_two
+      freq_domain = FFT.forward @data
+    else
+      freq_domain = DFT.forward @data
+    end
+    
+    # cutoff indices for real half
+    a = ((freq_range.min * size) / @sample_rate).round
+    b = ((freq_range.max * size) / @sample_rate).round
+    
+    window_size = b - a + 1
+    window_data = RectangularWindow.new(window_size).data
+        
+    case mod_type
+    when :keep
+      new_freq_data = Array.new(size, Complex(0))
+      
+      window_size.times do |n|
+        i = n + a
+        new_freq_data[i] = freq_domain[i] * window_data[n]
+      end
+
+      window_size.times do |n|
+        i = n + (size - 1 - b)
+        new_freq_data[i] = freq_domain[i] * window_data[n]
+      end
+    when :remove
+      new_freq_data = freq_domain.clone
+      
+      window_size.times do |n|
+        i = n + a
+        new_freq_data[i] = freq_domain[i] * (Complex(1.0) - window_data[n])
+      end
+
+      window_size.times do |n|
+        i = n + (size - 1 - b)
+        new_freq_data[i] = freq_domain[i] * (Complex(1.0) - window_data[n])
+      end
+    else
+      raise ArgumentError, "unkown mod_type #{mod_type}"
+    end
+    
+    if power_of_two
+      data = FFT.inverse new_freq_data
+    else
+      data = DFT.inverse new_freq_data
+    end
+    
+    @data = data.map {|complex| complex.real }
+    return self
+  end
+end
 end

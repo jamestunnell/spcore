@@ -5,20 +5,21 @@ describe 'windows' do
     size = 512
     
     window_classes = [
-      #SPCore::RectangularWindow,
-      #SPCore::HannWindow,
-      #SPCore::HammingWindow,
-      #SPCore::CosineWindow,
-      #SPCore::LanczosWindow,
-      #SPCore::TriangularWindow,
-      #SPCore::BartlettWindow,
-      #SPCore::GaussianWindow,
-      #SPCore::BartlettHannWindow,
-      #SPCore::BlackmanWindow,
-      #SPCore::NuttallWindow,
-      #SPCore::BlackmanHarrisWindow,
-      #SPCore::BlackmanNuttallWindow,
-      #SPCore::FlatTopWindow
+      #RectangularWindow,
+      #HannWindow,
+      #HammingWindow,
+      #CosineWindow,
+      #LanczosWindow,
+      #TriangularWindow,
+      #BartlettWindow,
+      #GaussianWindow,
+      #BartlettHannWindow,
+      #BlackmanWindow,
+      #NuttallWindow,
+      #BlackmanHarrisWindow,
+      #BlackmanNuttallWindow,
+      #FlatTopWindow,
+      #TukeyWindow
     ]
     
     windows = {}
@@ -27,7 +28,7 @@ describe 'windows' do
     end
     
     if windows.any?
-      Plotter.new(:title => "windows").plot_1d windows
+      Plotter.new(:title => "windows").plot_1d(windows, true)
     end
   end
 end

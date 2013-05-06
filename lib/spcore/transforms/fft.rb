@@ -3,6 +3,11 @@ module SPCore
 # @author James Tunnell
 class FFT
 
+  def self.power_of_two? size
+    log2size = Math::log2(size)
+    return log2size.floor == log2size
+  end
+  
   # Forward Radix-2 FFT transform using decimation-in-time. Operates on an array
   # of real values, representing a time domain signal.
   # Ported from unlicensed MATLAB code which was posted to the MathWorks file

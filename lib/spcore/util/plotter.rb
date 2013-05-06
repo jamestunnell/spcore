@@ -98,5 +98,13 @@ class Plotter
       end
     end
   end
+  
+  def plot_signals signals_hash
+    data_hash = {}
+    signals_hash.each do |name, signal|
+      data_hash[name] = signal.data
+    end
+    plot_1d data_hash
+  end
 end
 end

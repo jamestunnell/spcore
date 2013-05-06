@@ -4,7 +4,7 @@ module SPCore
 # sample-by-sample. As a result, it provides the envelope as an entire signal.
 #
 # @author James Tunnell
-class Envelope < Signal
+class Envelope
   
   attr_reader :data
   
