@@ -44,3 +44,8 @@ Require all sample rate args to be Fixnum.
 === 0.1.8 / 2013-05-03
 
 Add Envelope and Extrema classes, for signal analysis.
+
+=== 0.1.9 / 2013-05-06
+
+Add TukeyWindow.
+Add Signal#keep_frequences, Signal#remove_frequencies, and Plotter#plot_signals.
