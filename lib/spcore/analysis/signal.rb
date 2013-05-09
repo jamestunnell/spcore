@@ -46,13 +46,79 @@ class Signal
   # Plot the signal data, either against sample numbers or fraction of total samples.
   # @param plot_against_fraction If false, plot data against sample number. If true,
   #                              plot against fraction of total samples.
-  def plot_data plot_against_fraction
+  def plot_data plot_against_fraction = false
     xtitle = (plot_against_fraction ? "fraction of total samples" : "sample numbers")
     plotter = Plotter.new(:title => "signal data sequence", :xtitle => xtitle, :ytitle => "sample values")
     titled_sequence = {"signal data" => @data}
     plotter.plot_1d titled_sequence, plot_against_fraction
   end
   
+  # Run a discrete lowpass filter over the signal data (using SincFilter).
+  # Modifies current object.
+  def lowpass! cutoff_freq, order
+    filter = SincFilter.new(:sample_rate => @sample_rate, :order => order, :cutoff_freq => cutoff_freq)
+    @data = filter.lowpass(@data)
+    return self
+  end
+  
+  # Run a discrete lowpass filter over the signal data (using SincFilter).
+  # Return result in a new Signal object.
+  def lowpass cutoff_freq, order
+    self.clone.lowpass! cutoff_freq, order
+  end
+
+  # Run a discrete highpass filter over the signal data (using SincFilter).
+  # Modifies current object.
+  def highpass! cutoff_freq, order
+    filter = SincFilter.new(:sample_rate => @sample_rate, :order => order, :cutoff_freq => cutoff_freq)
+    @data = filter.highpass(@data)
+    return self
+  end
+  
+  # Run a discrete highpass filter over the signal data (using SincFilter).
+  # Return result in a new Signal object.
+  def highpass cutoff_freq, order
+    self.clone.highpass! cutoff_freq, order
+  end
+  
+  # Run a discrete bandpass filter over the signal data (using DualSincFilter).
+  # Modifies current object.
+  def bandpass! left_cutoff, right_cutoff, order
+    filter = DualSincFilter.new(
+      :sample_rate => @sample_rate,
+      :order => order,
+      :left_cutoff_freq => left_cutoff,
+      :right_cutoff_freq => right_cutoff
+    )
+    @data = filter.bandpass(@data)
+    return self
+  end
+  
+  # Run a discrete bandpass filter over the signal data (using DualSincFilter).
+  # Return result in a new Signal object.
+  def bandpass left_cutoff, right_cutoff, order
+    self.clone.bandpass! left_cutoff, right_cutoff, order
+  end
+
+  # Run a discrete bandstop filter over the signal data (using DualSincFilter).
+  # Modifies current object.
+  def bandstop! left_cutoff, right_cutoff, order
+    filter = DualSincFilter.new(
+      :sample_rate => @sample_rate,
+      :order => order,
+      :left_cutoff_freq => left_cutoff,
+      :right_cutoff_freq => right_cutoff
+    )
+    @data = filter.bandstop(@data)
+    return self
+  end
+  
+  # Run a discrete bandstop filter over the signal data (using DualSincFilter).
+  # Return result in a new Signal object.
+  def bandstop left_cutoff, right_cutoff, order
+    self.clone.bandstop! left_cutoff, right_cutoff, order
+  end
+
   # Increase the sample rate of signal data by the given factor using
   # discrete upsampling method. Modifies current object.
   # @param [Fixnum] upsample_factor Increase the sample rate by this factor.
@@ -437,7 +503,30 @@ class Signal
     end
     
     return cross_correlation
-  end  
+  end
+  
+  # Differentiates the signal data.
+  # @param [true/false] make_signal If true, return the result as a new
+  #                                 Signal object. Otherwise, return result
+  #                                 as an array.
+  def derivative make_signal = false
+    raise "Signal does not have at least 2 samples" unless @data.size > 2
+    
+    derivative = Array.new(@data.size)
+    sample_period = 1.0 / @sample_rate
+    
+    for i in 1...@data.count
+      derivative[i] = (@data[i] - @data[i-1]) / sample_period
+    end
+    
+    derivative[0] = derivative[1]
+    
+    if make_signal
+      return Signal.new(:sample_rate => @sample_rate, :data => derivative)
+    else
+      return derivative
+    end
+  end
 
   # Removes all but the given range of frequencies from the signal, using
   # frequency domain filtering. Modifes and returns the current object.
