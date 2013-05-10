@@ -11,47 +11,65 @@ class Envelope
   def initialize samples
     # combine absolute values of positive maxima and negative minima
     extrema = Extrema.new(samples)
-    points = {}
+    starting_outline = {}
     extrema.minima.each do |idx,val|
       if val <= 0.0
-        points[idx] = val.abs
+        starting_outline[idx] =val.abs
       end
     end
     
     extrema.maxima.each do |idx,val|
       if val >= 0.0
-        points[idx] = val.abs
+        starting_outline[idx] = val.abs
       end
     end
     
     # add in first and last samples so the envelope follows entire signal
-    points[0] = samples[0].abs
-    points[samples.count - 1] = samples[samples.count - 1].abs
+    starting_outline[0] = samples[0].abs
+    starting_outline[samples.count - 1] = samples[samples.count - 1].abs
     
-    indices = points.keys.sort
-    @data = Array.new(samples.count, 0)
+    # the extrema we have now are probably not spaced evenly. Upsampling at
+    # this point would lead to a time-distorted signal. So the next step is to
+    # interpolate between all the extrema to make a crude but properly sampled
+    # envelope.
     
-    # interpolate between all the extrema for the rest of the values. We
-    # manually added first/last index so the whole signal should be covered
-    # by this
+    proper_outline = Array.new(samples.count, 0)
+    indices = starting_outline.keys.sort
+    
     for i in 1...indices.count
       l_idx = indices[i-1]
       r_idx = indices[i]
       
-      l_val = points[l_idx]
-      r_val = points[r_idx]
+      l_val = starting_outline[l_idx]
+      r_val = starting_outline[r_idx]
       
-      @data[l_idx] = l_val
-      @data[r_idx] = r_val
+      proper_outline[l_idx] = l_val
+      proper_outline[r_idx] = r_val
       
       idx_span = r_idx - l_idx
       
       for j in (l_idx + 1)...(r_idx)
         x = (j - l_idx).to_f / idx_span
         y = Interpolation.linear l_val, r_val, x
-        @data[j] = y
+        proper_outline[j] = y
       end
     end
+    
+    # Now downsample by dropping samples, back to the number of starting_outline we had
+    # with just the extrema, but this time with samples properly spaced so as
+    # to avoid time distortion after upsampling.
+    
+    downsample_factor = (samples.count / starting_outline.count).to_i
+    downsampled_outline = []
+
+    (0...proper_outline.count).step(downsample_factor) do |n|
+      downsampled_outline.push proper_outline[n]
+    end
+    
+    # finally, use polynomial interpolation to upsample to the original sample rate.
+    
+    upsample_factor = samples.count / downsampled_outline.count.to_f
+    @data = PolynomialResampling.upsample(downsampled_outline, upsample_factor)
   end
 
 end

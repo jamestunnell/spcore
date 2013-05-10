@@ -252,16 +252,23 @@ class Signal
     return Extrema.new(@data)
   end
   
+  # Operate on the signal data (in place) with the absolute value function.
+  def abs!
+    @data = @data.map {|x| x.abs }
+    return self
+  end
+  
+  # Operate on copy of the Signal object with the absolute value function.
+  def abs
+    self.clone.abs!
+  end
+  
   # Determine the envelope of the current Signal and return either a Envelope
   # or a new Signal object as a result.
   # @param [True/False] make_signal If true, return envelope data in a new
   #                     Otherwise, return an Envelope object.
-  def envelope make_signal = false
-    if make_signal
-      return Signal.new(:sample_rate => @sample_rate, :data => Envelope.new(@data).data)
-    else
-      return Envelope.new(@data)
-    end
+  def envelope
+    Signal.new(:sample_rate => @sample_rate, :data => Envelope.new(@data).data)
   end
   
   # Add data in array or other signal to the beginning of current data.
@@ -509,7 +516,7 @@ class Signal
   # @param [true/false] make_signal If true, return the result as a new
   #                                 Signal object. Otherwise, return result
   #                                 as an array.
-  def derivative make_signal = false
+  def derivative
     raise "Signal does not have at least 2 samples" unless @data.size > 2
     
     derivative = Array.new(@data.size)
@@ -521,11 +528,7 @@ class Signal
     
     derivative[0] = derivative[1]
     
-    if make_signal
-      return Signal.new(:sample_rate => @sample_rate, :data => derivative)
-    else
-      return derivative
-    end
+    return Signal.new(:sample_rate => @sample_rate, :data => derivative)
   end
 
   # Removes all but the given range of frequencies from the signal, using

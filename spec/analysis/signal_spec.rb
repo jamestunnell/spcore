@@ -20,7 +20,7 @@ describe SPCore::Signal do
       
       @sin = SPCore::Signal.new(:sample_rate => sample_count, :data => sin)
       @expected = SPCore::Signal.new(:sample_rate => sample_count, :data => cos)
-      @actual = @sin.derivative(true)
+      @actual = @sin.derivative
     end
     
     it 'should produce a signal of same size' do
