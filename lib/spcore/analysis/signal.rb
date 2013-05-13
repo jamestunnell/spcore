@@ -247,6 +247,12 @@ class Signal
     Math.sqrt(energy / size)
   end
   
+  # Compute the mean of signal data.
+  def mean
+    sum = @data.inject(0){ |s, x| s + x }
+    return sum.to_f / size
+  end
+  
   # Find extrema (maxima, minima) within signal data.
   def extrema
     return Extrema.new(@data)
@@ -261,6 +267,15 @@ class Signal
   # Operate on copy of the Signal object with the absolute value function.
   def abs
     self.clone.abs!
+  end
+  
+  def normalize! level = 1.0
+    self.divide!(@data.max / level)
+  end
+  
+  # reduce all samples to 
+  def normalize level = 1.0
+    self.clone.normalize! level
   end
   
   # Determine the envelope of the current Signal and return either a Envelope
