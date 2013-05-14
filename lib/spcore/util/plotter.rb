@@ -60,15 +60,15 @@ class Plotter
   #
   # @example
   #   Plotter.plot_1d "somedata" => [0,2,3,6,3,-1]
-  def plot_1d titled_sequences, plot_against_fraction = false
+  def plot_1d titled_sequences
     datasets = []
     titled_sequences.each do |title, sequence|
       indices = Array.new(sequence.size)
       sequence.each_index do |i|
         indices[i] = i
-        if plot_against_fraction
-          indices[i] /= sequence.size.to_f
-        end
+        #if plot_against_fraction
+        #  indices[i] /= sequence.size.to_f
+        #end
       end
       
       dataset = Gnuplot::DataSet.new( [indices, sequence] ){ |ds|

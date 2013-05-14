@@ -42,15 +42,24 @@ class Signal
   def [](arg)
     @data[arg]
   end
+
+  # Plot the signal data against sample numbers.
+  def plot_1d
+    plotter = Plotter.new(:title => "Signal: values vs. sample number", :xtitle => "sample number", :ytitle => "sample value")
+    plotter.plot_1d "signal data" => @data
+  end
   
-  # Plot the signal data, either against sample numbers or fraction of total samples.
-  # @param plot_against_fraction If false, plot data against sample number. If true,
-  #                              plot against fraction of total samples.
-  def plot_data plot_against_fraction = false
-    xtitle = (plot_against_fraction ? "fraction of total samples" : "sample numbers")
-    plotter = Plotter.new(:title => "signal data sequence", :xtitle => xtitle, :ytitle => "sample values")
-    titled_sequence = {"signal data" => @data}
-    plotter.plot_1d titled_sequence, plot_against_fraction
+  # Plot the signal data against time.
+  def plot_2d
+    plotter = Plotter.new(:title => "Signal: values vs. time", :xtitle => "time (sec)", :ytitle => "sample value")
+    
+    data_vs_time = {}
+    sp = 1.0 / @sample_rate
+    @data.each_index do |i|
+      data_vs_time[i * sp] = @data[i]
+    end
+      
+    plotter.plot_2d "signal data" => data_vs_time
   end
   
   # Run a discrete lowpass filter over the signal data (using SincFilter).
