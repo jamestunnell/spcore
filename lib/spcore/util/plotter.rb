@@ -25,11 +25,12 @@ class Plotter
   end
   
   # Plot XY datapoints.
-  # @param [Hash] titled_hashes A hash that maps dataset titles to data. The data itself
-  #                             is a hash also, that maps x values to y values.
+  # @param [Hash] titled_hashes A hash that maps title strings to 2d datasets.
+  #                             The dataset itself is a hash also, that maps
+  #                             x values to y values.
   #
   # @example
-  #   Plotter.plot_2d "somedata" => {0.0 => 4.0, 1.0 => 2.0}
+  #   Plotter.new.plot_2d "somedata" => {0.0 => 4.0, 1.0 => 2.0}
   def plot_2d titled_hashes
     datasets = []
     titled_hashes.each do |title, hash|
@@ -51,15 +52,25 @@ class Plotter
     plot_datasets datasets
   end
 
-  # Plot a sequence of values.
-  # @param [Hash] titled_sequences A hash that maps sequence titles to data. The data itself
-  #                             is an array of values. In the plot, values will be mapped to
-  #                             their index in the sequence.
-  # @param plot_against_fraction If true, instead of plotting samples against sample number, plot
-  #                              them against the fraction (sample_number / total_samples).
+  # Plot XY datapoints.
+  # @param [Hash] titled_hashes A hash that maps title strings to 2d datasets.
+  #                             The dataset itself is a hash also, that maps
+  #                             x values to y values.
   #
   # @example
-  #   Plotter.plot_1d "somedata" => [0,2,3,6,3,-1]
+  #   Plotter.plot_2d "somedata" => {0.0 => 4.0, 1.0 => 2.0}
+  def self.plot_2d titled_hashes
+    return Plotter.new.plot_2d titled_hashes
+  end
+  
+  # Plot a sequence of values.
+  # @param [Hash] titled_sequences A hash that maps title strings to data
+  #                               sequences. The data itself is an array of
+  #                               values. In the plot, values will be mapped to
+  #                               their index in the sequence.
+  #
+  # @example
+  #   Plotter.new.plot_1d "somedata" => [0,2,3,6,3,-1]
   def plot_1d titled_sequences
     datasets = []
     titled_sequences.each do |title, sequence|
@@ -82,6 +93,18 @@ class Plotter
     plot_datasets datasets
   end
 
+  # Plot a sequence of values.
+  # @param [Hash] titled_sequences A hash that maps title strings to data
+  #                               sequences. The data itself is an array of
+  #                               values. In the plot, values will be mapped to
+  #                               their index in the sequence.
+  #
+  # @example
+  #   Plotter.plot_1d "somedata" => [0,2,3,6,3,-1]
+  def self.plot_1d titled_sequences
+    return Plotter.new.plot_1d titled_sequences
+  end
+
   # Plot Gnuplot::DataSet objects.
   # @param [Array] datasets An array of Gnuplot::DataSet objects.
   def plot_datasets datasets
@@ -98,13 +121,27 @@ class Plotter
       end
     end
   end
+
+  # Plot Gnuplot::DataSet objects.
+  # @param [Array] datasets An array of Gnuplot::DataSet objects.
+  def self.plot_datasets datasets
+    Plotter.new.plot_datasets datasets
+  end
   
+  # Plot data from Signal objects.
+  # @param [Hash] signals_hash A hash that maps title strings Signal objects
   def plot_signals signals_hash
     data_hash = {}
     signals_hash.each do |name, signal|
       data_hash[name] = signal.data
     end
     plot_1d data_hash
+  end
+
+  # Plot data from Signal objects.
+  # @param [Hash] signals_hash A hash that maps title strings Signal objects
+  def self.plot_signals signals_hash
+    Plotter.new.plot_signals signals_hash
   end
 end
 end

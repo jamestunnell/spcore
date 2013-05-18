@@ -41,6 +41,7 @@ require 'spcore/resampling/discrete_resampling'
 require 'spcore/resampling/polynomial_resampling'
 require 'spcore/resampling/hybrid_resampling'
 
+require 'spcore/analysis/correlation'
 require 'spcore/analysis/extrema'
 require 'spcore/analysis/envelope'
 require 'spcore/analysis/signal'
