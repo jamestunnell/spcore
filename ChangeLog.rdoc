@@ -49,3 +49,9 @@ Add Envelope and Extrema classes, for signal analysis.
 
 Add TukeyWindow.
 Add Signal#keep_frequences, Signal#remove_frequencies, and Plotter#plot_signals.
+
+=== 0.2.0 / 2013-05-21
+
+Add instance methods to Signal class: #duration, #normalize, #derivative, #lowpass, #highpass, #bandpass, #bandstop, #plot_1d, and #plot_2d.
+Add Correlation class to find similarity between signals (used to find a feature in an image).
+Make envelopes smoother with polynomial upsampling. In Signal#envelope and Signal, always return a Signal object (so also remove make_signal flag).
