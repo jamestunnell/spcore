@@ -37,6 +37,16 @@ class Signal
   def size
     @data.size
   end
+
+  # Size of the signal data.
+  def count
+    @data.size
+  end
+  
+  # Signal duration in seconds.
+  def duration
+    return @data.size.to_f / @sample_rate
+  end
   
   # Access signal data.
   def [](arg)

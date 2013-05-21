@@ -21,7 +21,7 @@ describe SPCore::Correlation do
         correlation = Correlation.new(@triangle, falling_ramp)
         correlation.data.last.should eq(correlation.data.max)
         
-        Plotter.plot_1d "correlate falling ramp" => correlation.data
+        #Plotter.plot_1d "correlate falling ramp" => correlation.data
       end
     end
   end  

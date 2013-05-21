@@ -1,6 +1,18 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SPCore::Signal do
+  describe '#duration' do
+    it 'should produce duration in seconds, according to sample_rate' do
+      sample_rate = 2000
+      [5,50,100,1500].each do |count|
+        zeros = Array.new(count, 0)
+        signal = SPCore::Signal.new(:data => zeros, :sample_rate => sample_rate)
+        expected_duration = count.to_f / sample_rate
+        signal.duration.should eq expected_duration
+      end      
+    end
+  end
+  
   describe '#derivative' do
     before :all do
       sample_rate = 200
