@@ -1,4 +1,5 @@
 module SPCore
+# Calculus analysis methods.
 class Calculus
   # Differentiates the given values.
   #

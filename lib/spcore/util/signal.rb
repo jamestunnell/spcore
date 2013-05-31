@@ -232,21 +232,24 @@ class Signal
     return self.clone.resample_hybrid!(upsample_factor, downsample_factor, filter_order)
   end
   
+  # Return the output of forward FFT on the signal data.
+  # @param [true/false] ignore_second_half If true, discard the second half of FFT 
+  #                                        output. If false, keep entire FFT output.
   def fft ignore_second_half
     fft_output = FFT.forward @data
     
     if ignore_second_half
       fft_output = fft_output[0...(fft_output.size / 2)]  # ignore second half
     end
-
-    return fft_output.map {|x| x.magnitude }  # map complex value to magnitude    
+    
+    return fft_output
   end
   
   # Run FFT on signal data to find magnitude of frequency components.
   # @param convert_to_db If true, magnitudes are converted to dB values.
   # @return [Hash] contains frequencies mapped to magnitudes.
   def freq_magnitudes convert_to_db = false
-    fft_output = fft true
+    fft_output = fft(true).map {|x| x.magnitude }  # map complex value to magnitude    
     
     if convert_to_db
       fft_output = fft_output.map {|x| Gain.linear_to_db x}
@@ -262,82 +265,16 @@ class Signal
     return freq_magnitudes
   end
   
-  # Find the fundamental frequency of signal. If there is a single harmonic
-  # series present then the fundamental of that series will be returned.
-  # Otherwise, the strongest peak found will be returned.
+  # Apply FrequencyDomain.fundamental to the signal and return the result.
   def fundamental
-    magnitudes = fft true    
+    return FrequencyDomain.fundamental @data, @sample_rate
+  end
+
+  # Apply FrequencyDomain.peaks to the signal and return the result.
+  def freq_peaks
+    return FrequencyDomain.peaks @data, @sample_rate
   end
   
-  # Find peaks among the frequency magnitudes
-  # @param [Numeric] start_freq The starting point to search for peaks.
-  # @param [Fixnum] n_windows The number of frequency windows to use in dividing 
-  #                           up the spectrum. Minimum is 1.
-  # @param [Numeric] k Number of times standard deviation to set peak theshold at. 
-  #                    Must be greater than 0.
-  def freq_peaks start_freq, n_windows, k = 1.5
-    raise ArgumentError, "start_freq < 1" if start_freq < 1
-    raise ArgumentError, "start_freq > sample_rate / 2" if start_freq > (@sample_rate / 2)    
-    raise ArgumentError, "n_windows is < 1" if n_windows < 1
-    raise ArgumentError, "k is <= 0" if k <= 0
-    
-    magnitudes = fft true
-    fft_size = magnitudes.size * 2 # mul by 2 because the second half of original fft_output was removed
-    
-    freq_to_idx = ->(freq){ (freq * fft_size) / @sample_rate.to_f }
-    idx_to_freq = ->(idx){ (idx * @sample_rate.to_f) / fft_size }
-    
-    scale = Scale.exponential(start_freq..(@sample_rate / 2.0), n_windows)    
-    windows = []    
-    for i in 1...scale.count
-      start_freq = scale[i-1]
-      stop_freq = scale[i]
-      
-      start_idx = freq_to_idx.call(start_freq).to_i
-      stop_idx = freq_to_idx.call(stop_freq).to_i
-      
-      windows.push(start_idx...stop_idx)
-    end
-    
-    peak_ranges = []
-    
-    windows.each do |window|
-      subset = magnitudes[window]
-      sd = Analysis.std_dev subset
-      threshold = sd * k
-      
-      in_peak = false
-      peak_count = 0
-      
-      subset.count.times do |j|
-        if subset[j] > threshold
-          if in_peak
-            peak_count += 1
-          else
-            peak_count = 1
-            in_peak = true
-          end
-        else
-          if in_peak
-            peak_ranges.push((window.min + j - peak_count)...(window.min + j))
-            in_peak = false
-          end
-        end
-      end
-    end
-    
-    peak_freqs = []
-    
-    peak_ranges.each do |peak_range|
-      subset = magnitudes[peak_range]
-      idx = subset.index(subset.max)
-      freq = idx_to_freq.call(peak_range.min + idx)
-      peak_freqs.push freq
-    end
-
-    return peak_freqs
-  end
-
   # Calculate the energy in current signal data.
   def energy
     return @data.inject(0.0){|sum,x| sum + (x * x)}

@@ -1,4 +1,5 @@
 module SPCore
+# Features analysis methods.
 class Features  
   # Returns minima and maxima.
   # @param [true/false] remove_inner_extrema Removes positive minima and negative maxima.

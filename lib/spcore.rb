@@ -44,6 +44,7 @@ require 'spcore/resampling/hybrid_resampling'
 require 'spcore/analysis/calculus'
 require 'spcore/analysis/features'
 require 'spcore/analysis/statistics'
+require 'spcore/analysis/frequency_domain'
 
 require 'spcore/util/gain'
 require 'spcore/util/limiters'

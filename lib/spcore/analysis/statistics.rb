@@ -1,4 +1,5 @@
 module SPCore
+# Statistical analysis methods.
 class Statistics
   # Compute the mean of a value series.
   def self.mean values

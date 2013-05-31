@@ -36,44 +36,6 @@ describe SPCore::Signal do
     end
   end
   
-  #describe '#fundamental' do
-  #  context 'harmonic series present' do
-  #    it 'should find the fundamental component of a harmonic series' do
-  #      cases = {
-  #        [40.0, 80.0, 120.0, 160.0] => 40.0,
-  #      }
-  #      
-  #      cases.each do |freqs, fundamental|
-  #        generator = SignalGenerator.new(:sample_rate => 2000, :size => 256)
-  #        signal = generator.make_signal(freqs)
-  #        signal.fundamental.should be_within(5.0).of(fundamental)
-  #      end
-  #    end
-  #  end
-  #  
-  #  context 'no harmonic series preset' do
-  #    it 'should return the strongest peak frequency' do
-  #      ideal_peaks = [40.0, 160.0, 250.0]
-  #      generator = SignalGenerator.new(:sample_rate => 2000, :size => 256)
-  #      signal = generator.make_signal(ideal_peaks)
-  #      signal.fundamental.should be_within(5.0).of(40.0)
-  #    end
-  #  end
-  #end
-  #
-  #describe '#freq_peaks' do
-  #  it 'should find the peak frequency components' do
-  #    ideal_peaks = [40.0, 160.0, 250.0]
-  #    generator = SignalGenerator.new(:sample_rate => 2000, :size => 256)
-  #    signal = generator.make_signal(ideal_peaks)
-  #    actual_peaks = signal.freq_peaks(5.0, 4, 2.0)
-  #    
-  #    ideal_peaks.count.times do |i|
-  #      actual_peaks[i].should be_within(5.0).of(ideal_peaks[i])
-  #    end
-  #  end
-  #end
-
   describe '#remove_frequencies' do
     before :each do
       generator = SignalGenerator.new(:sample_rate => 2000, :size => 256)
