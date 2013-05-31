@@ -41,13 +41,36 @@ class FrequencyDomain
   # Otherwise, the strongest peak found will be returned.
   def self.fundamental samples, sample_rate
     peaks = self.freq_peaks samples, sample_rate, true
-    
-    # look for a harmonic series
     fundamental = nil
     
+    freqs = peaks.keys
+    
+    partials = {}
+    
+    # look for a harmonic series
+    freqs.count.times do |i|
+      f = freqs[i]
+      ratios = []
+      
+      for j in (i+1)...freqs.count
+        g = freqs[j]
+        ratio = g / f
+        rounded = ratio.round
+        if (ratio - rounded).abs <= 0.2
+          ratios.push rounded
+        end
+      end
+      
+      partials[f] = ratios
+    end
+    
+    longest_series = partials.max_by {|fund, ratios| ratios.count }
+    
     # finding none, return the freq of the strongest peak
-    if fundamental.nil?
+    if longest_series[1].empty?
       fundamental = peaks.max_by { |freq, magn_db| magn_db }[0]
+    else
+      fundamental = longest_series[0]
     end
     
     return fundamental
