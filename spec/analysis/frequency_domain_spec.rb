@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SPCore::FrequencyDomain do
   
-  describe '.freq_peaks' do
+  describe '.peaks' do
     it 'should find the peak frequency components' do
       cases = [
         [40.0, 160.0, 250.0],
@@ -11,7 +11,7 @@ describe SPCore::FrequencyDomain do
       cases.each do |ideal_peaks|
         generator = SignalGenerator.new(:sample_rate => 2000, :size => 256)
         signal = generator.make_signal(ideal_peaks)
-        actual_peaks = FrequencyDomain.freq_peaks(signal.data, signal.sample_rate)
+        actual_peaks = FrequencyDomain.peaks(signal.data, signal.sample_rate)
         
         actual_peak_freqs = actual_peaks.keys
         

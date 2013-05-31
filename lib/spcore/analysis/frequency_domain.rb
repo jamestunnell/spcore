@@ -7,7 +7,7 @@ class FrequencyDomain
   end
     
   # Find frequency magnitude peaks. Magnitude is in dB.
-  def self.freq_peaks samples, sample_rate, filter_small_peaks = true
+  def self.peaks samples, sample_rate
     fft_out = FFT.forward samples
     fft_out = fft_out[0...(fft_out.size / 2)]
     fft_out = fft_out.map {|x| Gain.linear_to_db x.magnitude }  # map complex value to magnitude in decibels
@@ -16,16 +16,6 @@ class FrequencyDomain
     
     # map positive maxima to indices
     maxima = Features.maxima(fft_out, true)
-    
-    if filter_small_peaks
-      # filter out peaks that are not beyond 1 standard dev above mean
-      mean = Statistics.mean(fft_out)
-      sd = Statistics.std_dev(fft_out)
-      
-      maxima.keep_if do |idx, magn_db|
-        magn_db > (mean + sd)
-      end
-    end
 
     freq_peaks = {}
     maxima.keys.sort.each do |idx|
@@ -40,7 +30,7 @@ class FrequencyDomain
   # series present then the fundamental of that series will be returned.
   # Otherwise, the strongest peak found will be returned.
   def self.fundamental samples, sample_rate
-    peaks = self.freq_peaks samples, sample_rate, true
+    peaks = self.peaks samples, sample_rate
     fundamental = nil
     
     freqs = peaks.keys
