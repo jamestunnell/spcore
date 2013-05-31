@@ -232,14 +232,21 @@ class Signal
     return self.clone.resample_hybrid!(upsample_factor, downsample_factor, filter_order)
   end
   
+  def fft ignore_second_half
+    fft_output = FFT.forward @data
+    
+    if ignore_second_half
+      fft_output = fft_output[0...(fft_output.size / 2)]  # ignore second half
+    end
+
+    return fft_output.map {|x| x.magnitude }  # map complex value to magnitude    
+  end
+  
   # Run FFT on signal data to find magnitude of frequency components.
   # @param convert_to_db If true, magnitudes are converted to dB values.
   # @return [Hash] contains frequencies mapped to magnitudes.
   def freq_magnitudes convert_to_db = false
-    fft_output = FFT.forward @data
-    
-    fft_output = fft_output[0...(fft_output.size / 2)]  # ignore second half
-    fft_output = fft_output.map {|x| x.magnitude }  # map complex value to magnitude
+    fft_output = fft true
     
     if convert_to_db
       fft_output = fft_output.map {|x| Gain.linear_to_db x}
@@ -254,6 +261,82 @@ class Signal
     
     return freq_magnitudes
   end
+  
+  # Find the fundamental frequency of signal. If there is a single harmonic
+  # series present then the fundamental of that series will be returned.
+  # Otherwise, the strongest peak found will be returned.
+  def fundamental
+    magnitudes = fft true    
+  end
+  
+  # Find peaks among the frequency magnitudes
+  # @param [Numeric] start_freq The starting point to search for peaks.
+  # @param [Fixnum] n_windows The number of frequency windows to use in dividing 
+  #                           up the spectrum. Minimum is 1.
+  # @param [Numeric] k Number of times standard deviation to set peak theshold at. 
+  #                    Must be greater than 0.
+  def freq_peaks start_freq, n_windows, k = 1.5
+    raise ArgumentError, "start_freq < 1" if start_freq < 1
+    raise ArgumentError, "start_freq > sample_rate / 2" if start_freq > (@sample_rate / 2)    
+    raise ArgumentError, "n_windows is < 1" if n_windows < 1
+    raise ArgumentError, "k is <= 0" if k <= 0
+    
+    magnitudes = fft true
+    fft_size = magnitudes.size * 2 # mul by 2 because the second half of original fft_output was removed
+    
+    freq_to_idx = ->(freq){ (freq * fft_size) / @sample_rate.to_f }
+    idx_to_freq = ->(idx){ (idx * @sample_rate.to_f) / fft_size }
+    
+    scale = Scale.exponential(start_freq..(@sample_rate / 2.0), n_windows)    
+    windows = []    
+    for i in 1...scale.count
+      start_freq = scale[i-1]
+      stop_freq = scale[i]
+      
+      start_idx = freq_to_idx.call(start_freq).to_i
+      stop_idx = freq_to_idx.call(stop_freq).to_i
+      
+      windows.push(start_idx...stop_idx)
+    end
+    
+    peak_ranges = []
+    
+    windows.each do |window|
+      subset = magnitudes[window]
+      sd = Analysis.std_dev subset
+      threshold = sd * k
+      
+      in_peak = false
+      peak_count = 0
+      
+      subset.count.times do |j|
+        if subset[j] > threshold
+          if in_peak
+            peak_count += 1
+          else
+            peak_count = 1
+            in_peak = true
+          end
+        else
+          if in_peak
+            peak_ranges.push((window.min + j - peak_count)...(window.min + j))
+            in_peak = false
+          end
+        end
+      end
+    end
+    
+    peak_freqs = []
+    
+    peak_ranges.each do |peak_range|
+      subset = magnitudes[peak_range]
+      idx = subset.index(subset.max)
+      freq = idx_to_freq.call(peak_range.min + idx)
+      peak_freqs.push freq
+    end
+
+    return peak_freqs
+  end
 
   # Calculate the energy in current signal data.
   def energy
@@ -266,15 +349,34 @@ class Signal
     Math.sqrt(energy / size)
   end
   
-  # Compute the mean of signal data.
+  # Apply Statistics.mean to the signal data.
   def mean
-    sum = @data.inject(0){ |s, x| s + x }
-    return sum.to_f / size
+    Statistics.mean @data
+  end
+    
+  # Apply Statistics.std_dev to the signal data.
+  def std_dev
+    Statistics.std_dev @data
   end
   
-  # Find extrema (maxima, minima) within signal data.
+  # Apply Statistics.correlation to the signal data (as the image).
+  def correlation feature, zero_padding = 0
+    Statistics.correlation @data, feature, zero_padding
+  end
+
+  # Apply Features.extrema to the signal data.
   def extrema
-    return Extrema.new(@data)
+    return Features.extrema(@data)
+  end
+  
+  # Apply Features.minima to the signal data.
+  def minima
+    return Features.minima(@data)
+  end
+  
+  # Apply Features.maxima to the signal data.
+  def maxima
+    return Features.maxima(@data)
   end
   
   # Operate on the signal data (in place) with the absolute value function.
@@ -287,22 +389,30 @@ class Signal
   def abs
     self.clone.abs!
   end
-  
+
+  # reduce all samples to the given level  
   def normalize! level = 1.0
     self.divide!(@data.max / level)
   end
   
-  # reduce all samples to 
+  # reduce all samples to the given level
   def normalize level = 1.0
     self.clone.normalize! level
   end
   
-  # Determine the envelope of the current Signal and return either a Envelope
-  # or a new Signal object as a result.
-  # @param [True/False] make_signal If true, return envelope data in a new
-  #                     Otherwise, return an Envelope object.
-  def envelope
-    Signal.new(:sample_rate => @sample_rate, :data => Envelope.new(@data).data)
+  # Apply Features.envelope to the signal data, and return either a new Signal
+  # object or the raw envelope data.
+  # @param [True/False] as_signal If true, return envelope data in a new signal
+  #                               object. Otherwise, return raw envelope data.
+  #                               Set to true by default.
+  def envelope as_signal = true
+    env_data = Features.envelope @data
+    
+    if as_signal
+      return Signal.new(:sample_rate => @sample_rate, :data => env_data)
+    else
+      return env_data
+    end
   end
   
   # Add data in array or other signal to the beginning of current data.
@@ -467,104 +577,19 @@ class Signal
   alias_method :-, :subtract
   alias_method :*, :multiply
   alias_method :/, :divide
-  
-  # Determine how well the another signal (g) correlates to the current signal (f).
-  # Correlation is determined at every point in f. The signal g must not be
-  # longer than f. Correlation involves moving g along f and performing
-  # convolution. Starting a the beginning of f, it continues until the end
-  # of g hits the end of f. Doesn't actually convolve, though. Instead, it
-  # adds 
-  #
-  # @param [Array] other_signal The signal to look for in the current signal.
-  # @param [true/false] normalize Flag to indicate if normalization should be
-  #                               performed on input signals (performed on a copy
-  #                               of the original data).
-  # @raise [ArgumentError] if other_signal is not a Signal or Array.
-  # @raise [ArgumentError] if other_signal is longer than the current signal data.
-  def cross_correlation other_signal, normalize = true
-    if other_signal.is_a? Signal
-      other_data = other_signal.data
-    elsif other_signal.is_a? Array
-      other_data = other_signal
-    else
-      raise ArgumentError, "other_signal is not a Signal or Array"
-    end
     
-    f = @data
-    g = other_data
-    
-    raise ArgumentError, "g.count #{g.count} is greater than f.count #{f.count}" if g.count > f.count
-    
-    g_size = g.count
-    f_size = f.count
-    f_g_diff = f_size - g_size
-    
-    cross_correlation = []
-
-    if normalize
-      max = (f.max_by {|x| x.abs }).abs.to_f
-      
-      f = f.clone
-      g = g.clone
-      f.each_index {|i| f[i] =  f[i] / max }
-      g.each_index {|i| g[i] =  g[i] / max }
-    end
-
-    #puts "f: #{f.inspect}"
-    #puts "g: #{g.inspect}"
-
-    for n in 0..f_g_diff do
-      f_window = (n...(n + g_size)).entries
-      g_window = (0...g_size).entries
-      
-      sample = 0.0
-      for i in 0...f_window.count do
-        i_f = f_window[i]
-        i_g = g_window[i]
-        
-        #if use_relative_error
-        target = g[i_g].to_f
-        actual = f[i_f]
-        
-        #if target == 0.0 && actual != 0.0 && normalize
-        #  puts "target is #{target} and actual is #{actual}"
-        #  error = 1.0
-        #else
-          error = (target - actual).abs# / target
-        #end
-        
-        sample += error
-        
-        #else
-        #  sample += (f[i_f] * g[i_g])
-        #end
-      end
-      
-      cross_correlation << (sample)# / g_size.to_f)
-    end
-    
-    return cross_correlation
-  end
-  
-  # Differentiates the signal data.
-  # @param [true/false] make_signal If true, return the result as a new
-  #                                 Signal object. Otherwise, return result
-  #                                 as an array.
+  # Applies Calculus.derivative on the signal data, and returns a new Signal
+  # object with the result.
   def derivative
-    raise "Signal does not have at least 2 samples" unless @data.size > 2
-    
-    derivative = Array.new(@data.size)
-    sample_period = 1.0 / @sample_rate
-    
-    for i in 1...@data.count
-      derivative[i] = (@data[i] - @data[i-1]) / sample_period
-    end
-    
-    derivative[0] = derivative[1]
-    
-    return Signal.new(:sample_rate => @sample_rate, :data => derivative)
+    return Signal.new(:sample_rate => @sample_rate, :data => Calculus.derivative(@data))
   end
 
+  # Applies Calculus.integral on the signal data, and returns a new Signal
+  # object with the result.
+  def integral
+    return Signal.new(:sample_rate => @sample_rate, :data => Calculus.integral(@data))
+  end
+  
   # Removes all but the given range of frequencies from the signal, using
   # frequency domain filtering. Modifes and returns the current object.
   def remove_frequencies! freq_range
