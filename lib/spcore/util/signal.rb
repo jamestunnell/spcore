@@ -265,9 +265,15 @@ class Signal
     return freq_magnitudes
   end
   
-  # Apply FrequencyDomain.fundamental to the signal and return the result.
+  # Return the lowest frequency of the signal harmonic series.
   def fundamental
-    return FrequencyDomain.fundamental @data, @sample_rate
+    return harmonic_series.min
+  end
+  
+  # Apply FrequencyDomain.harmonic_series to the signal frequency peaks and
+  # return the result.
+  def harmonic_series
+    return FrequencyDomain.harmonic_series freq_peaks
   end
 
   # Apply FrequencyDomain.peaks to the signal and return the result.

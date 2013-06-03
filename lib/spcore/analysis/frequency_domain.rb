@@ -31,50 +31,37 @@ class FrequencyDomain
     return freq_peaks
   end
   
-  # Find the fundamental frequency of a set of samples. Picks the fundamental for
-  # the series with the highest total energy.
-  def self.fundamental samples, sample_rate
-    peaks = self.peaks samples, sample_rate
-    
-    tolerance = 0.1
-    n_partials = 8
-    series = {}
+  # Find the strongest harmonic series among the given peak data.
+  def self.harmonic_series peaks, max_partials = 8
+    tolerance_perc = 0.1
+    series = []
     
     # look for a harmonic series
     peaks.count.times do |i|
       f = peaks.keys[i]
-      harmonics = []
+      tolerance_hz = f * tolerance_perc
+      harmonics = [ f ]
       
-      n_partials.times do |n|
-        g = n * f
-        min = peaks.min_by {|h,magn| (h - g).abs }
+      for n in 2..(max_partials + 1)
+        target = n * f
+        window = (target - tolerance_hz)..(target + tolerance_hz)
+        candidates = peaks.select {|actual,magn| window.include?(actual) }
         
-        ratio = min[0] / f
-        percent_error = (ratio - n).abs / n
-        
-        if percent_error <= tolerance
+        if candidates.any?
+          min = candidates.min_by {|actual,magn| (actual - target).abs }
           harmonics.push min[0]
         end
       end
       
-      series[f] = harmonics
+      series.push harmonics
     end
-    
-    fundamentals = {}
     
     # find the strongest series
-    series.each do |fund,harmonics|
-      energy = peaks[fund]**2
-      
-      harmonics.each do |harmonic|
-        energy += peaks[harmonic]**2
-      end
-      
-      fundamentals[fund] = energy
+    strongest_series = series.max_by do |harmonics|
+      harmonics.inject(0) {|energy, harmonic| energy + peaks[harmonic]**2}
     end
     
-    max = fundamentals.max_by {|fund, energy| energy}
-    return max[0]
+    return strongest_series
   end
 end
 end
