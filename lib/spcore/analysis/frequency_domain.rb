@@ -5,7 +5,12 @@ class FrequencyDomain
   def self.idx_to_freq(fft_size, sample_rate, idx)
     return (idx * sample_rate.to_f) / fft_size
   end
-    
+  
+  # Convert an FFT frequency bin to the corresponding FFT output index
+  def self.freq_to_idx(fft_size, sample_rate, freq)
+    return (freq * fft_size ) / sample_rate.to_f
+  end
+  
   # Find frequency magnitude peaks. Magnitude is in dB.
   def self.peaks samples, sample_rate
     fft_out = FFT.forward samples
@@ -26,44 +31,50 @@ class FrequencyDomain
     return freq_peaks
   end
   
-  # Find the fundamental frequency of signal. If there is a single harmonic
-  # series present then the fundamental of that series will be returned.
-  # Otherwise, the strongest peak found will be returned.
+  # Find the fundamental frequency of a set of samples. Picks the fundamental for
+  # the series with the highest total energy.
   def self.fundamental samples, sample_rate
     peaks = self.peaks samples, sample_rate
-    fundamental = nil
     
-    freqs = peaks.keys
-    
-    partials = {}
+    tolerance = 0.1
+    n_partials = 8
+    series = {}
     
     # look for a harmonic series
-    freqs.count.times do |i|
-      f = freqs[i]
-      ratios = []
+    peaks.count.times do |i|
+      f = peaks.keys[i]
+      harmonics = []
       
-      for j in (i+1)...freqs.count
-        g = freqs[j]
-        ratio = g / f
-        rounded = ratio.round
-        if (ratio - rounded).abs <= 0.2
-          ratios.push rounded
+      n_partials.times do |n|
+        g = n * f
+        min = peaks.min_by {|h,magn| (h - g).abs }
+        
+        ratio = min[0] / f
+        percent_error = (ratio - n).abs / n
+        
+        if percent_error <= tolerance
+          harmonics.push min[0]
         end
       end
       
-      partials[f] = ratios
+      series[f] = harmonics
     end
     
-    longest_series = partials.max_by {|fund, ratios| ratios.count }
+    fundamentals = {}
     
-    # finding none, return the freq of the strongest peak
-    if longest_series[1].empty?
-      fundamental = peaks.max_by { |freq, magn_db| magn_db }[0]
-    else
-      fundamental = longest_series[0]
+    # find the strongest series
+    series.each do |fund,harmonics|
+      energy = peaks[fund]**2
+      
+      harmonics.each do |harmonic|
+        energy += peaks[harmonic]**2
+      end
+      
+      fundamentals[fund] = energy
     end
     
-    return fundamental
+    max = fundamentals.max_by {|fund, energy| energy}
+    return max[0]
   end
 end
 end
