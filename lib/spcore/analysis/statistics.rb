@@ -2,9 +2,13 @@ module SPCore
 # Statistical analysis methods.
 class Statistics
   # Compute the mean of a value series.
+  def self.sum values
+    return values.inject(0){ |s, x| s + x }
+  end
+  
+  # Compute the mean of a value series.
   def self.mean values
-    sum = values.inject(0){ |s, x| s + x }
-    return sum.to_f / values.size
+    return Statistics.sum(values) / values.size
   end
   
   # Compute the standard deviation of a value series.
@@ -12,8 +16,7 @@ class Statistics
     size = values.size
     raise ArgumentError, "size is <= 1" if size <= 1
     
-    total = values.inject(0){|sum,x| sum + x}
-    mean = total / size
+    mean = Statistics.mean values
     total_dist_from_mean = values.inject(0){|sum,x| sum + (x - mean)**2}
     return Math.sqrt(total_dist_from_mean / (size - 1))
   end

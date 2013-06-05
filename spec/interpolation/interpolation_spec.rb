@@ -1,5 +1,3 @@
-require 'pry'
-require 'benchmark'
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SPCore::Interpolation do

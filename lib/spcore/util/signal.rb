@@ -9,7 +9,8 @@ class Signal
   # Used to process hashed arguments in #initialize.
   ARG_SPECS = {
     :data => arg_spec(:reqd => true, :type => Array, :validator => ->(a){ a.any? }),
-    :sample_rate => arg_spec(:reqd => true, :type => Fixnum, :validator => ->(a){ a > 0.0 })
+    :sample_rate => arg_spec(:reqd => true, :type => Numeric, :validator => ->(a){ a > 0.0 }),
+    #:fft_format => arg_spec(:reqd => false, :type => Symbol, :default => FFT_MAGNITUDE_DECIBEL, :validator => ->(a){FFT_FORMATS.include?(a)})
   }
   
   attr_reader :data, :sample_rate
@@ -24,13 +25,17 @@ class Signal
   
   # Produce a new Signal object with the same data.
   def clone
-    Signal.new(:data => @data.clone, :sample_rate => @sample_rate)
+    new = Signal.new(:data => @data.clone, :sample_rate => @sample_rate)
+    new.instance_variable_set(:@frequency_domain, @frequency_domain)
+    return new
   end
   
   # Produce a new Signal object with a subset of the current signal data.
   # @param [Range] range Used to pick the data range.
   def subset range
-    Signal.new(:data => @data[range], :sample_rate => @sample_rate)
+    new = Signal.new(:data => @data[range], :sample_rate => @sample_rate)
+    new.instance_variable_set(:@frequency_domain, @frequency_domain)
+    return new
   end
   
   # Size of the signal data.
@@ -232,53 +237,54 @@ class Signal
     return self.clone.resample_hybrid!(upsample_factor, downsample_factor, filter_order)
   end
   
-  # Return the output of forward FFT on the signal data.
-  # @param [true/false] ignore_second_half If true, discard the second half of FFT 
-  #                                        output. If false, keep entire FFT output.
-  def fft ignore_second_half
-    fft_output = FFT.forward @data
-    
-    if ignore_second_half
-      fft_output = fft_output[0...(fft_output.size / 2)]  # ignore second half
+  def frequency_domain fft_format = FrequencyDomain::FFT_MAGNITUDE_DECIBEL
+    if @frequency_domain.nil?
+      @frequency_domain = FrequencyDomain.new(
+        :time_data => @data,
+        :sample_rate => @sample_rate,
+        :fft_format => fft_format
+      )
     end
-    
-    return fft_output
+    return @frequency_domain
+  end
+  
+  # Return the full output of forward FFT on the signal data.
+  def fft_full
+    frequency_domain.fft_full
+  end
+
+  # Return the first half of the the forward FFT on the signal data.
+  def fft_half
+    frequency_domain.fft_half
   end
   
   # Run FFT on signal data to find magnitude of frequency components.
-  # @param convert_to_db If true, magnitudes are converted to dB values.
   # @return [Hash] contains frequencies mapped to magnitudes.
-  def freq_magnitudes convert_to_db = false
-    fft_output = fft(true).map {|x| x.magnitude }  # map complex value to magnitude    
-    
-    if convert_to_db
-      fft_output = fft_output.map {|x| Gain.linear_to_db x}
-    end
-    
+  def freq_magnitudes
     freq_magnitudes = {}
-    fft_output.each_index do |i|
-      size = fft_output.size * 2 # mul by 2 because the second half of original fft_output was removed
-      freq = (@sample_rate * i) / size
-      freq_magnitudes[freq] = fft_output[i]
+    
+    fft_half.each_index do |i|
+      freq = frequency_domain.idx_to_freq(i)
+      freq_magnitudes[freq] = fft_half[i]
     end
     
     return freq_magnitudes
   end
-  
-  # Return the lowest frequency of the signal harmonic series.
-  def fundamental
-    return harmonic_series.min
+
+  # Apply FrequencyDomain.peaks to the signal and return the result.
+  def freq_peaks
+    return frequency_domain.peaks
   end
   
   # Apply FrequencyDomain.harmonic_series to the signal frequency peaks and
   # return the result.
   def harmonic_series
-    return FrequencyDomain.harmonic_series freq_peaks
+    return frequency_domain.harmonic_series
   end
-
-  # Apply FrequencyDomain.peaks to the signal and return the result.
-  def freq_peaks
-    return FrequencyDomain.peaks @data, @sample_rate
+  
+  # Return the lowest frequency of the signal harmonic series.
+  def fundamental
+    return harmonic_series.min
   end
   
   # Calculate the energy in current signal data.

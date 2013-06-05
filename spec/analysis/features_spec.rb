@@ -40,6 +40,21 @@ describe SPCore::Features do
     end
   end
   
+  describe '.top_n' do
+    it 'should return the n greatest of the given values' do
+      cases = {
+        [[1,2,3,4,5,6],2] => [5,6],
+        [[13,2,32,42,75,6],4] => [13,32,42,75],
+        [[-11,21,-4],1] => [21],
+        [[-11,21,-4, -14],2] => [-4,21],
+      }
+      
+      cases.each do |inputs, expected_output|
+        Features.top_n(inputs[0], inputs[1]).should eq expected_output
+      end
+    end
+  end
+  
   describe '.envelope' do
     before :all do
       sample_rate = 1000

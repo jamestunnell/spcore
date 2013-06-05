@@ -17,7 +17,24 @@ class Features
   # @param [true/false] remove_inner Removes negative maxima.
   def self.maxima samples, remove_inner = false
     self.extrema_hash(samples, remove_inner)[:maxima]
-  end  
+  end
+  
+  # return the n greatest values of the given array of values.
+  def self.top_n values, n
+    top_n = []
+    values.each do |value|
+      if top_n.count < n
+        top_n.push value
+      else
+        smaller = top_n.select {|x| x < value}
+        if smaller.any?
+          top_n.delete smaller.min
+          top_n.push value
+        end
+      end
+    end
+    return top_n.sort
+  end
 
   def self.envelope samples
     # starting with outer extrema (only positive maxima and negative minima)
