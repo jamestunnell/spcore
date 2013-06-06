@@ -28,4 +28,5 @@ DESCRIPTION
   gem.add_development_dependency 'yard', '~> 0.8'
   gem.add_development_dependency 'pry'
   gem.add_development_dependency 'pry-nav'
+  gem.add_development_dependency 'wavefile'
 end

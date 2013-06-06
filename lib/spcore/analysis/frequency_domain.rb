@@ -78,13 +78,20 @@ class FrequencyDomain
     
     # look for a harmonic series
     sorted_pairs.reverse[0...tries].each do |pair|
-      f = pair[0]
-      tolerance_hz = 2 * idx_to_freq(1)
-      harmonic_series = [ f ]
+      f_base = pair[0]
       
-      target = 2 * f
-      while target <= max_freq
-        window = (target - tolerance_hz)..(target + tolerance_hz)
+      min_idx_base = freq_to_idx(f_base) - 0.5
+      max_idx_base = min_idx_base + 1.0
+      
+      harmonic_series = [ f_base ]
+      target = 2 * f_base
+      min_idx = 2 * min_idx_base
+      max_idx = 2 * max_idx_base
+      
+      while target < max_freq
+        f_l = idx_to_freq(min_idx.floor)
+        f_h = idx_to_freq(max_idx.ceil)
+        window = f_l..f_h
         candidates = peaks.select {|actual,magn| window.include?(actual) }
         
         if candidates.any?
@@ -94,7 +101,9 @@ class FrequencyDomain
           break
         end
         
-        target += f
+        target += f_base
+        min_idx += min_idx_base
+        max_idx += max_idx_base
       end
       
       candidate_series.push harmonic_series
@@ -103,7 +112,7 @@ class FrequencyDomain
     strongest_series = candidate_series.max_by do |harmonic_series|
       sum = 0
       harmonic_series.each do |freq|
-        sum += peaks[freq] * peaks[freq]
+        sum += peaks[freq]**2
       end
       sum
     end
