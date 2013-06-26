@@ -278,13 +278,13 @@ class Signal
   
   # Apply FrequencyDomain.harmonic_series to the signal frequency peaks and
   # return the result.
-  def harmonic_series
-    return frequency_domain.harmonic_series
+  def harmonic_series opts = {}
+    return frequency_domain.harmonic_series(opts)
   end
   
   # Return the lowest frequency of the signal harmonic series.
-  def fundamental
-    return harmonic_series.min
+  def fundamental opts
+    return harmonic_series(opts).min
   end
   
   # Calculate the energy in current signal data.

@@ -6,17 +6,6 @@ describe SPCore::FrequencyDomain do
     @freq_tolerance = 0.1
   end
   
-  def match_arrays_with_tolerance ideal, actual, tolerance
-    actual.count.should eq ideal.count
-    actual.count.times do |i|
-      item_ideal = ideal[i]
-      item_actual = actual[i]
-      
-      percent_error = (item_ideal - item_actual).abs / item_ideal
-      percent_error.should be_within(tolerance).of(0.0)
-    end
-  end
-  
   def check_tolerance ideal, actual, tolerance_percent
     margin = ideal * tolerance_percent
     actual.should be_between(ideal - margin, ideal + margin)
@@ -43,7 +32,18 @@ describe SPCore::FrequencyDomain do
         generator = SignalGenerator.new(:sample_rate => 1000, :size => 256)
         signal = generator.make_signal(ideal_peaks)
         actual_peaks = signal.freq_peaks
-        match_arrays_with_tolerance ideal_peaks, actual_peaks.keys, @freq_tolerance
+        
+        ideal_peaks.each do |ideal_freq|
+          found = false
+          actual_peaks.keys.each do |actual_freq|
+            percent_error = (ideal_freq - actual_freq).abs / ideal_freq
+            if percent_error < @freq_tolerance
+              found = true
+              break
+            end
+          end
+          found.should be_true
+        end
       end
     end
   end
@@ -58,10 +58,10 @@ describe SPCore::FrequencyDomain do
         }
         
         cases.each do |freqs, fundamental|
-          generator = SignalGenerator.new(:sample_rate => 1000, :size => 512)
+          generator = SignalGenerator.new(:sample_rate => 600, :size => 1024)
           signal = generator.make_signal(freqs)
           
-          series = signal.harmonic_series
+          series = signal.harmonic_series(:min_freq => 12.0)
           check_tolerance fundamental, series.first, @freq_tolerance
           verify_harmonic_series series, @freq_tolerance
         end
@@ -78,23 +78,22 @@ describe SPCore::FrequencyDomain do
           generator = SignalGenerator.new(:sample_rate => 1000, :size => 512)
           signal = generator.make_signal(ideal_freqs)
           
-          series = signal.harmonic_series
+          series = signal.harmonic_series(:min_freq => 16.0)
           check_tolerance fundamental, series.first, @freq_tolerance
           verify_harmonic_series series, @freq_tolerance
         end
       end
       
-      it 'should find the fundamental component of the longest harmonic series present when multiple series are present' do
+      it 'should find the fundamental component of the strongest harmonic series present when multiple series are present' do
         cases = {
-          [29.0, 58.0, 87.0, 100.0, 200.0, 300.0, 400.0] => 100.0,
           [33.0, 66.0, 99.0, 132.0, 150.0, 300.0, 450.0] => 33.0,
         }
         
         cases.each do |freqs, fundamental|
-          generator = SignalGenerator.new(:sample_rate => 1000, :size => 512)
+          generator = SignalGenerator.new(:sample_rate => 1000, :size => 1024)
           signal = generator.make_signal(freqs)
           
-          series = signal.harmonic_series
+          series = signal.harmonic_series(:min_freq => 16.0)
           check_tolerance fundamental, series.first, @freq_tolerance
           verify_harmonic_series series, @freq_tolerance
         end
@@ -108,11 +107,11 @@ describe SPCore::FrequencyDomain do
            {:strongest_peak => 44.0, :other_peaks => [99.0, 155.0]}
         ]
         
-        generator = SignalGenerator.new(:sample_rate => 1000, :size => 256)
+        generator = SignalGenerator.new(:sample_rate => 1000, :size => 512)
         cases.each do |hash|
           signal = generator.make_signal([hash[:strongest_peak]], :amplitude => 1.5)
           signal.add!(generator.make_signal(hash[:other_peaks]))
-          signal.fundamental.should be_within(5.0).of(hash[:strongest_peak])
+          signal.fundamental(:min_freq => 20.0).should be_within(5.0).of(hash[:strongest_peak])
         end
       end
     end
@@ -138,7 +137,7 @@ describe SPCore::FrequencyDomain do
             end
             
             signal = SPCore::Signal.new(:data => data, :sample_rate => reader.format.sample_rate)
-            series = signal.harmonic_series
+            series = signal.harmonic_series(:min_freq => 40.0)
             check_tolerance ideal_fundamental, series.min, @freq_tolerance
           end          
         end
