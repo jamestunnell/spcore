@@ -1,21 +1,39 @@
 module SPCore
 # Features analysis methods.
 class Features  
-  # Returns minima and maxima.
-  # @param [true/false] remove_inner_extrema Removes positive minima and negative maxima.
-  def self.extrema samples, remove_inner = false
+  # Returns all minima and maxima (including positive minima and negative maxima).
+  def self.extrema samples
+    remove_inner = false
     self.extrema_hash(samples, remove_inner)[:extrema]
   end
-  
-  # Returns minima.
-  # @param [true/false] remove_inner Removes positive minima.
-  def self.minima samples, remove_inner = false
+
+  # Returns outer minima and maxima (excludes positive minima and negative maxima).
+  def self.outer_extrema samples
+    remove_inner = true
+    self.extrema_hash(samples, remove_inner)[:extrema]
+  end
+
+  # Returns all minima (including positive minima).
+  def self.minima samples
+    remove_inner = false
     self.extrema_hash(samples, remove_inner)[:minima]
   end
 
-  # Returns maxima.
-  # @param [true/false] remove_inner Removes negative maxima.
-  def self.maxima samples, remove_inner = false
+  # Returns all minima (excludes positive minima).
+  def self.negative_minima samples
+    remove_inner = true
+    self.extrema_hash(samples, remove_inner)[:minima]
+  end
+  
+  # Returns maxima (includes negative maxima).
+  def self.maxima samples
+    remove_inner = false
+    self.extrema_hash(samples, remove_inner)[:maxima]
+  end
+
+  # Returns maxima (excludes negative maxima).
+  def self.positive_maxima samples
+    remove_inner = true
     self.extrema_hash(samples, remove_inner)[:maxima]
   end
   
@@ -35,10 +53,24 @@ class Features
     end
     return top_n.sort
   end
-
+  
+  def self.outline samples
+    starting_outline = make_starting_outline samples
+    filled_in_outline = fill_in_starting_outline starting_outline, samples.count
+    dropsample_factor = (samples.count / starting_outline.count).to_i
+    return dropsample_filled_in_outline filled_in_outline, dropsample_factor
+  end
+  
   def self.envelope samples
-    # starting with outer extrema (only positive maxima and negative minima)
-    starting_outline = self.extrema(samples, true)
+    outline = self.outline samples
+    upsample_factor = samples.count / outline.count.to_f
+    return PolynomialResampling.upsample(outline, upsample_factor)
+  end
+
+  private
+  
+  def self.make_starting_outline samples
+    starting_outline = self.outer_extrema(samples)
     
     # add in first and last samples so the envelope follows entire signal
     starting_outline[0] = samples[0].abs
@@ -49,12 +81,16 @@ class Features
       starting_outline[key] = starting_outline[key].abs
     end
     
+    return starting_outline
+  end
+  
+  def self.fill_in_starting_outline starting_outline, tgt_count
     # the extrema we have now are probably not spaced evenly. Upsampling at
     # this point would lead to a time-distorted signal. So the next step is to
     # interpolate between all the extrema to make a crude but properly sampled
     # envelope.
     
-    proper_outline = Array.new(samples.count, 0)
+    proper_outline = Array.new(tgt_count, 0)
     indices = starting_outline.keys.sort
     
     for i in 1...indices.count
@@ -76,27 +112,21 @@ class Features
       end
     end
     
-    # Now downsample by dropping samples, back to the number of starting_outline we had
-    # with just the extrema, but this time with samples properly spaced so as
-    # to avoid time distortion after upsampling.
-    
-    downsample_factor = (samples.count / starting_outline.count).to_i
-    downsampled_outline = []
+    return proper_outline
+  end
+  
+  # This properly spaces samples in the filled in outline, so as to avoid time
+  # distortion after upsampling.
+  def self.dropsample_filled_in_outline filled_in_outline, dropsample_factor
+    dropsampled_outline = []
 
-    (0...proper_outline.count).step(downsample_factor) do |n|
-      downsampled_outline.push proper_outline[n]
+    (0...filled_in_outline.count).step(dropsample_factor) do |n|
+      dropsampled_outline.push filled_in_outline[n]
     end
     
-    # finally, use polynomial interpolation to upsample to the original sample rate.
-    
-    upsample_factor = samples.count / downsampled_outline.count.to_f
-    output = PolynomialResampling.upsample(downsampled_outline, upsample_factor)
-    
-    return output
+    return dropsampled_outline
   end
-
-  private
-
+  
   # Finds extrema (minima and maxima), return :extrema, :minima, and :maxima
   # seperately in a hash.
   def self.extrema_hash samples, remove_inner = false

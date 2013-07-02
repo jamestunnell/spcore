@@ -53,12 +53,12 @@ class FrequencyDomain
   # Find frequency peak values.
   def peaks
     # map positive maxima to indices
-    maxima = Features.maxima(@fft_half, false)
+    positive_maxima = Features.positive_maxima(@fft_half)
 
     freq_peaks = {}
-    maxima.keys.sort.each do |idx|
+    positive_maxima.keys.sort.each do |idx|
       freq = idx_to_freq(idx)
-      freq_peaks[freq] = maxima[idx]
+      freq_peaks[freq] = positive_maxima[idx]
     end
     
     return freq_peaks

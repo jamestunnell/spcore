@@ -318,14 +318,29 @@ class Signal
     return Features.extrema(@data)
   end
   
+  # Apply Features.outer_extrema to the signal data.
+  def outer_extrema
+    return Features.outer_extrema(@data)
+  end
+  
   # Apply Features.minima to the signal data.
   def minima
     return Features.minima(@data)
+  end
+
+  # Apply Features.negative_minima to the signal data.
+  def negative_minima
+    return Features.negative_minima(@data)
   end
   
   # Apply Features.maxima to the signal data.
   def maxima
     return Features.maxima(@data)
+  end
+
+  # Apply Features.positive_maxima to the signal data.
+  def positive_maxima
+    return Features.positive_maxima(@data)
   end
   
   # Operate on the signal data (in place) with the absolute value function.
