@@ -24,7 +24,7 @@ class SincFilter
   # Given a filter order, cutoff frequency, sample rate, and window class,
   # develop a FIR filter kernel that can be used for lowpass filtering.
   def initialize args
-    hash_make SincFilter::ARG_SPECS, args
+    hash_make args, SincFilter::ARG_SPECS
     
     raise ArgumentError, "cutoff_freq is greater than 0.5 * sample_rate" if @cutoff_freq > (@sample_rate / 2.0)
     

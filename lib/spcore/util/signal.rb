@@ -20,7 +20,7 @@ class Signal
   # @param [Hash] hashed_args Hashed arguments. Required keys are :data and
   #                           :sample_rate. See ARG_SPECS for more details.
   def initialize hashed_args
-    hash_make Signal::ARG_SPECS, hashed_args
+    hash_make hashed_args, Signal::ARG_SPECS
   end
   
   # Produce a new Signal object with the same data.

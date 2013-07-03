@@ -21,7 +21,7 @@ class Plotter
   #                           All params are optional. See ARG_SPECS for
   #                           parameter details.
   def initialize hashed_args = {}
-    hash_make Plotter::ARG_SPECS, hashed_args
+    hash_make hashed_args, Plotter::ARG_SPECS
   end
   
   # Plot XY datapoints.

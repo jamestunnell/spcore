@@ -20,7 +20,7 @@ class EnvelopeDetector
   #                    :attack_time (in seconds) (reqd) and :release_time
   #                    (in seconds) (reqd). See ARG_SPECS for more details.  
   def initialize args
-    hash_make EnvelopeDetector::ARG_SPECS, args
+    hash_make args, EnvelopeDetector::ARG_SPECS
 
     @g_attack = Math.exp(-1.0 / (sample_rate * attack_time))
     @g_release = Math.exp(-1.0 / (sample_rate * release_time))

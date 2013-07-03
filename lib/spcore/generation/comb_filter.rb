@@ -16,23 +16,23 @@ class CombFilter
   attr_reader :type, :frequency, :alpha
   
   def initialize args
-    hash_make CombFilter::ARG_SPECS, args
+    hash_make args, CombFilter::ARG_SPECS
     calculate_params
   end
   
   def type= type
-    validate_arg ARG_SPECS[:type], type
+    ARG_SPECS[:type].validate_value type
     @type = type
   end
 
   def frequency= frequency
-    validate_arg ARG_SPECS[:frequency], frequency
+    ARG_SPECS[:frequency].validate_value frequency
     @frequency = frequency
     calculate_params
   end
   
   def alpha= alpha
-    validate_arg ARG_SPECS[:alpha], alpha
+    ARG_SPECS[:alpha].validate_value alpha
     @alpha = alpha
   end
   

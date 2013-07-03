@@ -38,7 +38,7 @@ class Oscillator
   #                    :wave_type, :frequency, :amplitude, :phase_offset, and :dc_offset.
   #                    See ARG_SPECS for more details.  
   def initialize args
-    hash_make Oscillator::ARG_SPECS, args
+    hash_make args, Oscillator::ARG_SPECS
     
     @phase_angle_incr = (@frequency * TWO_PI) / @sample_rate
     @current_phase_angle = @phase_offset

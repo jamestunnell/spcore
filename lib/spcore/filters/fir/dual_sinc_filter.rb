@@ -24,7 +24,7 @@ class DualSincFilter
   # Given a filter order, 2 cutoff frequencies, sample rate, and window class,
   # develop a FIR filter kernel that can be used for lowpass filtering.
   def initialize args
-    hash_make DualSincFilter::ARG_SPECS, args
+    hash_make args, DualSincFilter::ARG_SPECS
     
     raise ArgumentError, "left_cutoff_freq is greater than 0.5 * sample_rate" if @left_cutoff_freq > (@sample_rate * 0.5)
     raise ArgumentError, "right_cutoff_freq is greater than 0.5 * sample_rate" if @right_cutoff_freq > (@sample_rate * 0.5)

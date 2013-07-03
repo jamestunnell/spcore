@@ -20,7 +20,7 @@ class DelayLine
   #                    :max_delay_seconds (reqd) and :delay_seconds (not reqd).
   #                    See ARG_SPECS for more details.
   def initialize args
-    hash_make DelayLine::ARG_SPECS, args
+    hash_make args, DelayLine::ARG_SPECS
     raise ArgumentError, "delay_seconds #{delay_seconds} is greater than max_delay_seconds #{max_delay_seconds}" if @delay_seconds > @max_delay_seconds
     @buffer = CircularBuffer.new((@sample_rate * @max_delay_seconds) + 1, :override_when_full => true)
     @buffer.push_ary Array.new(@buffer.size, 0.0)

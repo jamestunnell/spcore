@@ -14,7 +14,7 @@ class SignalGenerator
   # A new instance of SignalGenerator.
   # @param [Hash] args Required keys are :sample_rate and :size.
   def initialize args
-    hash_make ARG_SPECS, args
+    hash_make args, ARG_SPECS
   end
   
   # Generate a Signal object with noise data.

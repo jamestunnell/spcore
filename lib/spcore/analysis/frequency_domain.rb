@@ -28,7 +28,7 @@ class FrequencyDomain
   attr_reader :time_data, :sample_rate, :fft_format, :fft_full, :fft_half
   
   def initialize args
-    hash_make FrequencyDomain::ARG_SPECS, args
+    hash_make args, FrequencyDomain::ARG_SPECS
     @fft_full = FFT.forward @time_data
     @fft_half = @fft_full[0...(@fft_full.size / 2)]
     
